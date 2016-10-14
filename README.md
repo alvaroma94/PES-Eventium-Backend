@@ -13,3 +13,6 @@ Tutorial para postgres con python https://www.tutorialspoint.com/postgresql/post
 poner host 0.0.0.0 implica que el server ahora es accesible a través de la ip del ordenador.
 "
 
+- Librerías que usamos:
+ - flask (librería que proporciona el server)
+ - psycopg2 (librería de postresql para python)
