@@ -2,8 +2,8 @@
 La versión de python que usamos es la 2.7.X
 
 - Tutorial para postgres con python 
+ - http://initd.org/psycopg/docs/usage.html
  - https://www.tutorialspoint.com/postgresql/postgresql_python.htm
- - http://initd.org/psycopg/docs/usage.html#passing-parameters-to-sql-queries
 
 - Para iniciar el server en modo local simplemente hacer: 
 "python eventium.py" (por defecto la conexión se establece en localhost:5000 === 127.0.0.1:5000)
