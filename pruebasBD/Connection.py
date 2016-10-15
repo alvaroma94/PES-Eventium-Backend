@@ -24,6 +24,7 @@ class Connection:
  		el server tendra el suyo propio
  		cada uno q se lo configure a su gusto
  		'''
+ 		print "attempting connection ..."
 		configFile = open("dbConfig.json")
 		if (not configFile): #si no existe el fichero
 			raise ValueError("dbCOnfig.json not found")
@@ -46,7 +47,7 @@ class Connection:
 		self.conn.rollback()
 
 
-
+'''
 c = Connection.Instance()
 c.connect()
 
@@ -67,7 +68,7 @@ print cursor.fetchall() #devuelve todas las tuplas
 
 cursor.close()
 c.disconnect()
-
+'''
 
 
 
