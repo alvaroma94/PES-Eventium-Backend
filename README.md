@@ -1,4 +1,6 @@
 # PES-Eventium-Backend
+IP server 10.4.41.147
+
 La versión de python que usamos es la 2.7.X
 
 - Tutorial para postgres con python 
