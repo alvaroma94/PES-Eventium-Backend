@@ -31,6 +31,7 @@ class GatewayTest:
 		except psycopg2.IntegrityError as err:
 			print err
 			ret = False
+			c.rollback()
 		return ret
 
 
