@@ -23,3 +23,12 @@ poner host 0.0.0.0 implica que el server ahora es accesible a través de la ip d
 
 - Forzar cierre del proceso python flask en windows desde cmd:
  - "Taskkill /IM python.exe /F"
+
+- Provar recurso Test de la API del server:
+ - Tener la VPN activada
+ - tener el proceso de flask corriendo (ver paso de iniciar el server en el servidor de la fib)
+ - de momento se puede:
+ 
+  - 10.4.41.147:5000/tests <- GET
+  - 10.4.41.147:5000/test/id <- aqui poner el id del test
+  - 10.4.41.147/test <- POST (poner en el body los campos id, num, data son respectivamente int, int, y string
