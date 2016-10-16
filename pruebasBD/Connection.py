@@ -11,6 +11,7 @@ class Connection:
 	#para simplificar su uso
 	
 	def __init__(self):
+		self.connected = False
 		pass #este metodo se llama automaticamente, es la constructora, no hace nada
 	
 	def disconnect(self):
@@ -24,17 +25,19 @@ class Connection:
  		el server tendra el suyo propio
  		cada uno q se lo configure a su gusto
  		'''
- 		print "attempting connection ..."
-		configFile = open("dbConfig.json")
-		if (not configFile): #si no existe el fichero
-			raise ValueError("dbCOnfig.json not found")
-		config = json.loads(configFile.read())
-		configFile.close()
-		# la variable conn es implicita
-		self.conn = psycopg2.connect(database=config['database'], user=config['user'], 
-						password=config['password'], host=config['host'],
-					    port=config['port'])
-		print 'connection started'
+ 		if (not self.connected):
+	 		print "attempting connection ..."
+			configFile = open("dbConfig.json")
+			if (not configFile): #si no existe el fichero
+				raise ValueError("dbCOnfig.json not found")
+			config = json.loads(configFile.read())
+			configFile.close()
+			# la variable conn es implicita
+			self.conn = psycopg2.connect(database=config['database'], user=config['user'], 
+							password=config['password'], host=config['host'],
+						    port=config['port'])
+			print 'connection started'
+			self.connected = True
 
 	def commit(self): #se aplican realizados hasta ahora en la BD
 		self.conn.commit()
