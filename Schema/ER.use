@@ -1,0 +1,67 @@
+model Schema
+
+-- classes
+
+class USER
+attributes
+	ID : Integer
+	USERNAME : Integer
+	PASSWORD : Integer
+	SALT : String
+end
+
+class EVENT
+attributes
+end
+
+class COMMENT
+attributes
+end
+
+class CATEGORY
+attributes
+end
+
+--AssociationClasses
+
+associationclass FOLLOWS between
+	USER[*] role follower
+	USER[*] role following
+attributes
+end
+
+associationclass ATTENDS between
+	USER[*]
+	EVENT[*]
+attributes
+end
+
+associationclass LIKINGS between
+	USER[*]
+	CATEGORY[*]
+attributes
+end
+
+associationclass CLASSIFICATION between
+	EVENT[*]
+	CATEGORY[*]
+attributes
+end
+
+--Associations
+
+association Creates between
+	USER[1] role organizer
+	EVENT[*] role organized
+end
+
+association Has between
+	EVENT[1]
+	COMMENT[*]
+end
+
+association Posts between
+	USER[1]
+	COMMENT[*]
+end
+
