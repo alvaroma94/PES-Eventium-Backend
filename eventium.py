@@ -16,7 +16,7 @@ connection.connect()
 
 msgNotFound = json.dumps({ 'status' : 'Not found'})
 msgCreatedOK = json.dumps({ 'status': 'Created'})
-msgAlreadyExists = json.dumps({'status' : "Already exists" })
+msgAlreadyExists = json.dumps({'status' : 'Already exists' })
 #si no existe la tabla la creo
 try:
 	cursor = connection.cursor()
@@ -64,6 +64,7 @@ def postTest():
 		resp = Response(msgCreatedOK, status = 201, mimetype = "application/json")
 	else:
 		resp = Response(msgAlreadyExists, status = 200, mimetype="application/json")
+	return resp
 
 if __name__ == "__main__":
 	while True:
