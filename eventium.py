@@ -5,6 +5,7 @@ from connection import Connection
 from gatewayTest import GatewayTest
 from finderTest import FinderTest
 import psycopg2
+import json
 
 
 
@@ -13,6 +14,9 @@ app = Flask(__name__)
 connection = Connection.Instance()
 connection.connect()
 
+msgNotFound = json.dumps({ 'status' : 'Not found'})
+msgCreatedOK = json.dumps({ 'status': 'Created'})
+msgAlreadyExists = json.dumps({'status' : "Already exists" })
 #si no existe la tabla la creo
 try:
 	cursor = connection.cursor()
@@ -36,7 +40,7 @@ def getTests():
 		info = finder.tuplesToJson(rows)
 		resp = Response(info, status=200, mimetype="application/json")
 	else:
-		resp = Response("Not found", status=404)
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
 @app.route("/test/<id>", methods = ['GET'])
@@ -47,7 +51,7 @@ def getTest(id):
 		info = finder.tupleToJson(row)
 		resp = Response(info, status=200, mimetype="application/json")	
 	else:
-		resp = Response("Not found", status=404)
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
 @app.route("/test", methods = ['POST'])
@@ -56,8 +60,10 @@ def postTest():
 	num = request.form['num']
 	data = request.form['data']
 	newTest = GatewayTest(id,num,data)
-	if (newTest.insert()): return "OK"
-	else: return "ya existe"
+	if (newTest.insert()):
+		resp = Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	else:
+		resp = Response(msgAlreadyExists, status = 200, mimetype="application/json")
 
 if __name__ == "__main__":
 	while True:
