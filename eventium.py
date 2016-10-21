@@ -4,6 +4,7 @@ sys.path.append('./pruebasBD')
 from connection import Connection
 from gatewayTest import GatewayTest
 from finderTest import FinderTest
+from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
 
@@ -40,7 +41,7 @@ def getTests():
 	finder = FinderTest.Instance()
 	rows = finder.getAll()
 	if (rows): # si no es nulo
-		info = finder.tuplesToJson(rows)
+		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
 		resp = Response(info, status=200, mimetype="application/json")
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
@@ -51,7 +52,7 @@ def getTest(id):
 	finder = FinderTest.Instance()
 	row = finder.find(id)
 	if (row):
-		info = finder.tupleToJson(row)
+		info = tupleToJson(row) #row es un gateway cualquiera
 		resp = Response(info, status=200, mimetype="application/json")	
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")

@@ -28,11 +28,4 @@ class FinderTest:
 			ret.append(test)
 		return ret
 
-	def tupleToJson(self, info): #tuple es una palabra reservada de python
-		return json.dumps(info.toTuple())
-
-	def tuplesToJson(self, tuples):
-		ret = []
-		for t in tuples:
-			ret.append(t.toTuple())
-		return json.dumps(ret)
+	
