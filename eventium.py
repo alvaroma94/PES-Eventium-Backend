@@ -17,6 +17,9 @@ connection.connect()
 msgNotFound = json.dumps({ 'status' : 'Not found'})
 msgCreatedOK = json.dumps({ 'status': 'Created'})
 msgAlreadyExists = json.dumps({'status' : 'Already exists' })
+msgDeletedOK = json.dumps({ 'status': 'Deleted'})
+msgUpdatedOK = json.dumps({ 'status': 'Updated'})
+msgTypeError = json.dumps({'status' : 'Type Error'})
 #si no existe la tabla la creo
 try:
 	cursor = connection.cursor()
@@ -60,15 +63,51 @@ def postTest():
 	num = request.form['num']
 	data = request.form['data']
 	newTest = GatewayTest(id,num,data)
-	if (newTest.insert()):
-		resp = Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	error = newTest.insert()
+	if error == None:
+		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	elif error == psycopg2.IntegrityError:
+		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
+	elif error == psycopg2.DataError:
+		return Response(msgTypeError, status = 400, mimetype="application/json")
+
+
+@app.route("/test", methods = ['DELETE'])
+def deleteTest():
+	print 'delete'
+	id = request.form['id']
+	print id
+	finder = FinderTest.Instance()
+	test = finder.find(id)
+	print test
+	if (test):
+		print 'lo voy a borrar'
+		test.remove()
+		return Response(msgDeletedOK, status = 201, mimetype = "application/json")
 	else:
-		resp = Response(msgAlreadyExists, status = 200, mimetype="application/json")
-	return resp
+		return Response(msgNotFound, status=404,  mimetype="application/json")
+
+@app.route("/test", methods = ['PUT'])
+def updateTest():
+	id = request.form['id']
+	finder = FinderTest.Instance()
+	test = finder.find(id)
+	if(test):
+		num = request.form['num']
+		data = request.form['data']
+		test.num = num
+		test.data = data
+		error = test.update()
+		if error == None: 
+			return Response(msgUpdatedOK, status = 201, mimetype = "application/json")
+		elif error == psycopg2.DataError:
+			return Response(msgTypeError, status = 400, mimetype = "application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")
 
 if __name__ == "__main__":
 	while True:
 		try:
-			app.run(use_reloader = False)
+			app.run(use_reloader = False, debug = True)
 		except:
 			pass

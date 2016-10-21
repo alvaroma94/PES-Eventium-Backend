@@ -2,6 +2,7 @@ import psycopg2
 import SingletonPattern
 from gatewayTest import GatewayTest
 from connection import Connection
+from utilsBD import UtilsBD
 import json
 
 #patron finder de Row Data Gateway
@@ -10,23 +11,17 @@ class FinderTest:
 	def __init__(self):
 		pass
 	def find(self, id):
-		c = Connection.Instance()
-		cursor = c.cursor()
 		query = "SELECT * FROM test WHERE id = %s"
 		values = (id,)
-		cursor.execute(query, values)
-		t = cursor.fetchone()
+		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
 			test = GatewayTest(id = t[0], num = t[1], data = t[2])
 			return test
 		return t
 
 	def getAll(self):
-		c = Connection.Instance()
-		cursor = c.cursor()
 		query = "SELECT * FROM test"
-		cursor.execute(query)
-		tuples = cursor.fetchall()
+		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
 			test = GatewayTest(id = t[0], num = t[1], data = t[2])
