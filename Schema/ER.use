@@ -5,8 +5,9 @@ model Schema
 class USER
 attributes
 	ID : Integer
-	USERNAME : Integer
-	PASSWORD : Integer
+	USERNAME : String
+	PASSWORD : String
+	MAIL: String
 	SALT : String
 end
 

@@ -32,6 +32,21 @@ except psycopg2.ProgrammingError as err:
 	cursor.close()
 	connection.rollback()
 
+@app.route("/user", methods = ['POST'])
+def postTest():
+	id = request.form['id']
+	username = request.form['username']
+	password = request.form['password']
+	mail = request.form['mail']
+	newUser = UserGateway(id,username,password, mail)
+	error = newUser.insert()
+	if error == None:
+		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	elif error == psycopg2.IntegrityError:
+		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
+	elif error == psycopg2.DataError:
+		return Response(msgTypeError, status = 400, mimetype="application/json")
+	
 @app.route("/")
 def hello():
     return "Hello World!"
