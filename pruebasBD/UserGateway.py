@@ -13,8 +13,8 @@ class UserGateway:
 		self.mail = mail
 
 	def insert(self):
-		query = "INSERT INTO USER (ID, USERNAME, PASSWORD) VALUES (%s ,%s, %s)"
-		values = (self.id, self.username, self.password)
+		query = "INSERT INTO \"USER\"   (\"USERNAME\" , \"PASSWORD\" , \"MAIL\" ) VALUES (%s, %s, %s)"
+		values = (self.username, self.password, self.mail)
 		return UtilsBD.Instance().executeInsert(query,values)
 					
 

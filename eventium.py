@@ -4,6 +4,10 @@ sys.path.append('./pruebasBD')
 from connection import Connection
 from gatewayTest import GatewayTest
 from finderTest import FinderTest
+from UserGateway import UserGateway
+from EventGateway import EventGateway
+from EventFinder import EventFinder
+
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -32,8 +36,45 @@ except psycopg2.ProgrammingError as err:
 	cursor.close()
 	connection.rollback()
 
+@app.route("/event", methods = ['POST'])
+def postEvents():
+	id = request.form['id']
+	organizerId = request.form['organizerId']
+	title = request.form['title']
+	newEvent = EventGateway(id,organizerId,title)
+	error = newEvent.insert()
+	if error == None:
+		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	elif error == psycopg2.IntegrityError:
+		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
+	elif error == psycopg2.DataError:
+		return Response(msgTypeError, status = 400, mimetype="application/json")
+
+@app.route("/event", methods = ['GET'])
+def getEventsTitle():
+	titulo = request.headers['titulo']
+	finder = EventFinder.Instance()
+	rows = finder.getTitulo(titulo)
+	if (rows): # si no es nulo
+		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
+		resp = Response(info, status=200, mimetype="application/json")
+	else:
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
+	return resp
+
+@app.route("/events", methods = ['GET'])
+def getEvents():
+	finder = EventFinder.Instance()
+	rows = finder.getAll()
+	if (rows): # si no es nulo
+		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
+		resp = Response(info, status=200, mimetype="application/json")
+	else:
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
+	return resp
+
 @app.route("/user", methods = ['POST'])
-def postTest():
+def postUser():
 	id = request.form['id']
 	username = request.form['username']
 	password = request.form['password']
