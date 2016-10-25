@@ -9,6 +9,7 @@ from EventGateway import EventGateway
 from EventFinder import EventFinder
 from finderComment import FinderComment
 from gatewayComment import GatewayComment
+from gatewayValoration import GatewayValoration
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -67,6 +68,19 @@ def postEventComment(eventid):
 	userid = request.form['userid']
 	comment = GatewayComment(text = text, userid = userid, eventid = eventid)
 	error = comment.insert()
+	if error == None:
+		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	elif error == psycopg2.IntegrityError:
+		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
+	elif error == psycopg2.DataError:
+		return Response(msgTypeError, status = 400, mimetype="application/json")
+
+@app.route("/event/<eventid>/valoration", methods = ['POST'])
+def postEventValoration(eventid):
+	points = request.form['points']
+	userid = request.form['userid']
+	valoration = GatewayValoration(points = points, userid = userid, eventid = eventid)
+	error = valoration.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
 	elif error == psycopg2.IntegrityError:
