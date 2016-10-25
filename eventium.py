@@ -7,7 +7,8 @@ from finderTest import FinderTest
 from UserGateway import UserGateway
 from EventGateway import EventGateway
 from EventFinder import EventFinder
-
+from finderComment import FinderComment
+from gatewayComment import GatewayComment
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -37,12 +38,35 @@ except psycopg2.ProgrammingError as err:
 	connection.rollback()
 
 @app.route("/event", methods = ['POST'])
-def postEvents():
+def postEvent():
 	id = request.form['id']
 	organizerId = request.form['organizerId']
 	title = request.form['title']
 	newEvent = EventGateway(id,organizerId,title)
 	error = newEvent.insert()
+	if error == None:
+		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	elif error == psycopg2.IntegrityError:
+		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
+	elif error == psycopg2.DataError:
+		return Response(msgTypeError, status = 400, mimetype="application/json")
+
+@app.route("/event/<eventid>/comments", methods = ['GET'])
+def getEventsComment(eventid):
+	finder = FinderComment.Instance()
+	rows = finder.findByEvent(id)
+	if (rows):
+		info = tuplesToJson(rows)
+		return Response(info, status=200, mimetype="application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")
+
+@app.route("/event/<eventid>/comment", methods = ['POST'])
+def postEventComment(eventid):
+	text = request.form['text']
+	userid = request.form['userid']
+	comment = GatewayComment(text = text, userid = userid, eventid = eventid)
+	error = comment.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
 	elif error == psycopg2.IntegrityError:
