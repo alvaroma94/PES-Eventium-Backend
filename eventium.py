@@ -88,7 +88,7 @@ def postEventValoration(eventid):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-@app.route("/event", methods = ['GET'])
+@app.route("/events", methods = ['GET'])
 def getEventsTitle():
 	titulo = request.headers['titulo']
 	finder = EventFinder.Instance()
