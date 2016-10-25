@@ -54,7 +54,7 @@ def postEvent():
 @app.route("/event/<eventid>/comments", methods = ['GET'])
 def getEventsComment(eventid):
 	finder = FinderComment.Instance()
-	rows = finder.findByEvent(id)
+	rows = finder.findByEvent(eventid)
 	if (rows):
 		info = tuplesToJson(rows)
 		return Response(info, status=200, mimetype="application/json")

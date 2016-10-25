@@ -13,8 +13,9 @@ class FinderComment:
 	def findByEvent(self, eventid):
 		query = "SELECT * FROM \"COMMENT\" WHERE \"EVENTID\" = %s"
 		values = (eventid,)
-		t = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
-		if (t):
-			comment = GatewayComment(text = t[0], userid = t[1], eventid = t[2])
-			return comment
-		return t
+		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
+		ret = []
+		for t in tuples:
+			test = GatewayComment(text = t[0], userid = t[1], eventid = t[2])
+			ret.append(test)
+		return ret
