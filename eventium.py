@@ -144,6 +144,17 @@ def getEvents():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
+@app.route("/users", methods = ['GET'])
+def getUsers():
+	finder = UserFinder.Instance()
+	rows = finder.getAll()
+	if (rows): # si no es nulo
+		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
+		resp = Response(info, status=200, mimetype="application/json")
+	else:
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
+	return resp
+
 @app.route("/user", methods = ['POST'])
 def postUser():
 	id = request.form['id']

@@ -17,9 +17,19 @@ class UserFinder:
 		values = (username,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
-			user = UserGateway(id = t[0], username = t[1], password = t[2])
+			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3])
 			return user
 		return t
+
+	def getAll(self):
+		query = "SELECT * FROM \"USER\""
+		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
+		ret = []
+		for t in tuples:
+			test = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3])
+			ret.append(test)
+		return ret
+
 	def findByMailOrUser(self, clave):
 
 		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s or  \"MAIL\" = %s"
