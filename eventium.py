@@ -2,6 +2,7 @@ from flask import Flask, Response, request
 import sys
 sys.path.append('./pruebasBD')
 from flask_mail import Mail
+from flask_mail import Message
 from connection import Connection
 from gatewayTest import GatewayTest
 from finderTest import FinderTest
@@ -19,6 +20,16 @@ import json
 
 
 app = Flask(__name__)
+mail = Mail(app)
+app.config.update(
+	DEBUG=True,
+	#EMAIL SETTINGS
+	MAIL_SERVER='smtp.gmail.com',
+	MAIL_PORT=465,
+	MAIL_USE_SSL=True,
+	MAIL_USERNAME = 'eventiumbcn@gmail.com',
+	MAIL_PASSWORD = 'eventium321'
+	)
 mail = Mail(app)
 
 connection = Connection.Instance()
@@ -51,8 +62,10 @@ def sendMail():
 		#info = tupleToJson(row) #row es un gateway cualquiera
 		username = row.getUsername()
 		password =  row.getPassword()
-		mail = row.getMail()
-		msg = Message("Hola", sender="admin@eventium.com", recipients=[mail])
+		maill = row.getMail()
+		msg = Message("Password", sender="admin@eventium.com", recipients=[maill])
+		msg.body = "Hola " + username + " tu password es la siguiente: " + password
+		mail.send(msg)
 		return Response(msgGoodMail, status=200, mimetype="application/json")	
 	else:
 		return Response(msgBadMail, status=404,  mimetype="application/json")
