@@ -11,6 +11,12 @@ class UserGateway:
 		self.username = username
 		self.password = password
 		self.mail = mail
+	def getPassword(self):    
+		return self.password
+	def getMail(self):
+		return self.mail
+	def getUsername(self):
+		return self.username
 
 	def insert(self):
 		query = "INSERT INTO \"USER\"   (\"USERNAME\" , \"PASSWORD\" , \"MAIL\" ) VALUES (%s, %s, %s)"

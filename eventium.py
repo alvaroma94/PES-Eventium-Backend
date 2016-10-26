@@ -1,10 +1,12 @@
 from flask import Flask, Response, request
 import sys
 sys.path.append('./pruebasBD')
+from flask_mail import Mail
 from connection import Connection
 from gatewayTest import GatewayTest
 from finderTest import FinderTest
 from UserGateway import UserGateway
+from UserFinder import UserFinder
 from EventGateway import EventGateway
 from EventFinder import EventFinder
 from finderComment import FinderComment
@@ -17,6 +19,7 @@ import json
 
 
 app = Flask(__name__)
+mail = Mail(app)
 
 connection = Connection.Instance()
 connection.connect()
@@ -27,6 +30,8 @@ msgAlreadyExists = json.dumps({'status' : 'Already exists' })
 msgDeletedOK = json.dumps({ 'status': 'Deleted'})
 msgUpdatedOK = json.dumps({ 'status': 'Updated'})
 msgTypeError = json.dumps({'status' : 'Type Error'})
+msgGoodMail= json.dumps({'status' : 'La password ha sido enviada a tu mail'})
+msgBadMail= json.dumps({'status' : 'El usuario o mail no existe'})
 #si no existe la tabla la creo
 try:
 	cursor = connection.cursor()
@@ -37,6 +42,21 @@ except psycopg2.ProgrammingError as err:
 	print err
 	cursor.close()
 	connection.rollback()
+@app.route("/mail", methods = ['GET'])
+def sendMail():
+	clave = request.headers['clave']
+	finder = UserFinder.Instance()
+	row = finder.findByMailOrUser(clave)
+	if (row):
+		#info = tupleToJson(row) #row es un gateway cualquiera
+		username = row.getUsername()
+		password =  row.getPassword()
+		mail = row.getMail()
+		msg = Message("Hola", sender="admin@eventium.com", recipients=[mail])
+		return Response(msgGoodMail, status=200, mimetype="application/json")	
+	else:
+		return Response(msgBadMail, status=404,  mimetype="application/json")
+	
 
 @app.route("/event", methods = ['POST'])
 def postEvent():
