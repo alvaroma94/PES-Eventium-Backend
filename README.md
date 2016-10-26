@@ -1,5 +1,6 @@
 # PES-Eventium-Backend
-IP server 10.4.41.147
+IP server 10.4.41.168
+
 
 La versión de python que usamos es la 2.7.X
 
@@ -29,6 +30,6 @@ poner host 0.0.0.0 implica que el server ahora es accesible a través de la ip d
  - tener el proceso de flask corriendo (ver paso de iniciar el server en el servidor de la fib)
  - de momento se puede:
  
-  - 10.4.41.147:5000/tests <- GET
-  - 10.4.41.147:5000/test/id <- aqui poner el id del test
-  - 10.4.41.147/test <- POST (poner en el body los campos id, num, data son respectivamente int, int, y string
+  - 10.4.41.168:5000/tests <- GET
+  - 10.4.41.168:5000/test/id <- aqui poner el id del test
+  - 10.4.41.168/test <- POST (poner en el body los campos id, num, data son respectivamente int, int, y string
