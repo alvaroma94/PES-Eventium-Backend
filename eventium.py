@@ -160,7 +160,7 @@ def postUser():
 	username = request.form['username']
 	password = request.form['password']
 	mail = request.form['mail']
-	newUser = UserGateway(username, password, mail)
+	newUser = UserGateway(None, username, password, mail)
 	error = newUser.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")

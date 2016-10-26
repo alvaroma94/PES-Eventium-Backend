@@ -5,8 +5,9 @@ from utilsBD import UtilsBD
 
 #patron row data gateway (cada instancia de la clase es una fila de la bd)
 class UserGateway:
-	def __init__(self, username, password, mail):
+	def __init__(self, id, username, password, mail):
 		#variables privadas de la clase
+		self.id = id
 		self.username = username
 		self.password = password
 		self.mail = mail
