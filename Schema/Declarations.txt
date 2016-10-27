@@ -17,6 +17,7 @@ CREATE TABLE "USER" (
 CREATE TABLE "FOLLOWS" (
 	"FOLLOWERID" int NOT NULL REFERENCES "USER"("ID"),
 	"FOLLOWEDID" int NOT NULL REFERENCES "USER"("ID"),
+	"SUBSCRIBED" boolean, /*Indica si followerid está suscrito a followedid*/
 	PRIMARY KEY ("FOLLOWERID", "FOLLOWEDID")
 );
 
