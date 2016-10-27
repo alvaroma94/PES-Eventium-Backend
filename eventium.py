@@ -157,10 +157,16 @@ def getUsers():
 
 @app.route("/user", methods = ['POST'])
 def postUser():
+	print 'hola'
 	username = request.form['username']
+	print 'hola'
 	password = request.form['password']
+	print 'hola'
 	mail = request.form['mail']
-	newUser = UserGateway(None, username, password, mail)
+	print 'hola'
+	pic = request.form['pic']
+	print pic
+	newUser = UserGateway(None, username, password, mail, pic)
 	error = newUser.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
