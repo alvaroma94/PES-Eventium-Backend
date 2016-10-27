@@ -13,6 +13,7 @@ from EventFinder import EventFinder
 from finderComment import FinderComment
 from gatewayComment import GatewayComment
 from gatewayValoration import GatewayValoration
+from gatewayFollowing import GatewayFollowing
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -157,15 +158,10 @@ def getUsers():
 
 @app.route("/user", methods = ['POST'])
 def postUser():
-	print 'hola'
 	username = request.form['username']
-	print 'hola'
 	password = request.form['password']
-	print 'hola'
 	mail = request.form['mail']
-	print 'hola'
 	pic = request.form['pic']
-	print pic
 	newUser = UserGateway(None, username, password, mail, pic)
 	error = newUser.insert()
 	if error == None:
@@ -174,7 +170,19 @@ def postUser():
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-	
+
+@app.route("/user/<id>/follows", methods = ['POST'])
+def postUserFollows(id):
+	followedId = request.form['followed']
+	newFollows = GatewayFollowing(id, followedId)
+	error = newFollows.insert()
+	if error == None:
+		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
+	elif error == psycopg2.IntegrityError:
+		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
+	elif error == psycopg2.DataError:
+		return Response(msgTypeError, status = 400, mimetype="application/json")
+
 @app.route("/")
 def hello():
     return "Hello World!"
