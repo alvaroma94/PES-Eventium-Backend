@@ -14,6 +14,7 @@ from finderComment import FinderComment
 from gatewayComment import GatewayComment
 from gatewayValoration import GatewayValoration
 from gatewayFollowing import GatewayFollowing
+from finderFollowing import FinderFollowing
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -182,6 +183,18 @@ def postUserFollows(id):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
+
+@app.route("/user/<id>/subscription/<followed>", methods = ['PUT'])
+def putUserSubscription(id, followed):
+	subscribed = request.form['subscribed']
+	finder = FinderFollowing.Instance()
+	follows = finder.findSubscription(id,followed)
+	follows.subscribed = subscribed == "True"
+	error = follows.update()
+	if error == None:
+		return Response(msgUpdatedOK, status=200, mimetype="application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")
 
 @app.route("/")
 def hello():

@@ -7,15 +7,23 @@ from utilsBD import UtilsBD
 class GatewayFollowing:
 	def __init__(self, followerId, followedId, subscribed = False):
 		#variables privadas de la clase
-		self.followedId = followedId
 		self.followerId = followerId
+		self.followedId = followedId
+		self.subscribed = subscribed
+
+	def setSubscribed(subscribed):
 		self.subscribed = subscribed
 
 	def insert(self):
 		query = "INSERT INTO \"FOLLOWS\" (\"FOLLOWERID\", \"FOLLOWEDID\", \"SUBSCRIBED\") VALUES (%s ,%s, %s)"
 		values = (self.followerId, self.followedId, self.subscribed)
 		return UtilsBD.Instance().executeInsert(query,values)
-			
+	
+	def update(self):
+		query = "UPDATE \"FOLLOWS\" SET \"SUBSCRIBED\" = %s WHERE \"FOLLOWERID\" = %s and \"FOLLOWEDID\" = %s"
+		values = (self.subscribed, self.followerId, self.followedId)
+		return UtilsBD.Instance().executeUpdate(query,values)
+		
 	def toTuple(self):
 		info = {"followerId": self.followerId, "followed": self.followedId, "subscribed": self.subscribed}
 		return info
