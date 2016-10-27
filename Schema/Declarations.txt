@@ -8,7 +8,9 @@ CREATE TABLE "USER" (
 	"USERNAME" varchar(255) NOT NULL UNIQUE,
 	"PASSWORD" varchar(255) NOT NULL,
 	"MAIL" varchar(255) NOT NULL UNIQUE,
-	"SALT" varchar(255) /*NOT NULL*/ /*POR AHORA NO USAREMOS SALT*/
+	"SALT" varchar(255), /*NOT NULL*/ /*POR AHORA NO USAREMOS SALT*/
+	"SALDO" int, 
+	"PIC" text
 );
 
 
