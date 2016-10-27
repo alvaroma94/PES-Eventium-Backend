@@ -215,6 +215,22 @@ def putUserSubscription(id, followed):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 
+@app.route("/user/<id>/wallet", methods = ['PUT'])
+def putUserWallet(id):
+	cardNumber = request.form['card']
+	cvc = request.form['cvc']
+	money = request.form['money']
+	
+	user = UserFinder.Instance().findForDeposit(id)
+
+	# esto es provisional
+	if user.wallet: user.wallet += int(money)
+	else: user.wallet = int(money)
+
+	user.updateWallet()
+
+	return Response(msgUpdatedOK, status=200, mimetype="application/json")
+
 @app.route("/")
 def hello():
     return "Hello World!"
