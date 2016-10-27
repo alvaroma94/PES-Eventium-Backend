@@ -184,6 +184,15 @@ def postUserFollows(id):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+@app.route("/user/<id>/follows/<followed>", methods = ['DELETE'])
+def deleteUserFollows(id, followed):
+	follows = GatewayFollowing(id, followed)
+	error = follows.remove()
+	if error == None:
+		return Response(msgDeletedOK, status = 201, mimetype = "application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")
+
 @app.route("/user/<id>/subscription/<followed>", methods = ['PUT'])
 def putUserSubscription(id, followed):
 	subscribed = request.form['subscribed']

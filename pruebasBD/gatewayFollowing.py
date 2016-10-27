@@ -23,6 +23,11 @@ class GatewayFollowing:
 		query = "UPDATE \"FOLLOWS\" SET \"SUBSCRIBED\" = %s WHERE \"FOLLOWERID\" = %s and \"FOLLOWEDID\" = %s"
 		values = (self.subscribed, self.followerId, self.followedId)
 		return UtilsBD.Instance().executeUpdate(query,values)
+	
+	def remove(self):
+		query = "DELETE FROM \"FOLLOWS\" WHERE \"FOLLOWERID\" = %s and \"FOLLOWEDID\" = %s"
+		values = (self.followerId, self.followedId)
+		UtilsBD.Instance().executeRemove(query,values)
 		
 	def toTuple(self):
 		info = {"followerId": self.followerId, "followed": self.followedId, "subscribed": self.subscribed}
