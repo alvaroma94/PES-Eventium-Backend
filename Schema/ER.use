@@ -41,6 +41,12 @@ associationclass ATTENDS between
 	USER[*]
 	EVENT[*]
 attributes
+end
+
+associationclass VALORATION between
+	USER[*]	role puntuator
+	EVENT[*] role puntued
+attributes
 	POINTS : Integer
 end
 
