@@ -11,6 +11,15 @@ class UserFinder:
 	def __init__(self):
 		pass
 
+	def findForDeposit(self, id):
+		query = "SELECT \"SALDO\" FROM \"USER\" WHERE \"ID\" = %s"
+		values = (id,)
+		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
+		if (t):
+			print t
+			user = UserGateway(id = id, username = None, password = None, mail = None, wallet = t[0])
+			return user
+		return t
 
 	def findByName(self, username):
 		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s"

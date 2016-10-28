@@ -179,6 +179,13 @@ def getUser(name):
 	if (row):
 		info = tupleToJson(row) #row es un gateway cualquiera
 		resp = Response(info, status=200, mimetype="application/json")	
+
+@app.route("/user/<id>/follows", methods = ['GET'])
+def getUserFollows(id):
+	rows = FinderFollowing.Instance().find(id)
+	if (rows): # si no es nulo
+		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
+		resp = Response(info, status=200, mimetype="application/json")
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
@@ -195,6 +202,15 @@ def postUserFollows(id):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+@app.route("/user/<id>/follows/<followed>", methods = ['DELETE'])
+def deleteUserFollows(id, followed):
+	follows = GatewayFollowing(id, followed)
+	error = follows.remove()
+	if error == None:
+		return Response(msgDeletedOK, status = 201, mimetype = "application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")
+
 @app.route("/user/<id>/subscription/<followed>", methods = ['PUT'])
 def putUserSubscription(id, followed):
 	subscribed = request.form['subscribed']
@@ -206,6 +222,22 @@ def putUserSubscription(id, followed):
 		return Response(msgUpdatedOK, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
+
+@app.route("/user/<id>/wallet", methods = ['PUT'])
+def putUserWallet(id):
+	cardNumber = request.form['card']
+	cvc = request.form['cvc']
+	money = request.form['money']
+	
+	user = UserFinder.Instance().findForDeposit(id)
+
+	# esto es provisional
+	if user.wallet: user.wallet += int(money)
+	else: user.wallet = int(money)
+
+	user.updateWallet()
+
+	return Response(msgUpdatedOK, status=200, mimetype="application/json")
 
 @app.route("/")
 def hello():
