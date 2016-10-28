@@ -9,18 +9,23 @@ attributes
 	PASSWORD : String
 	MAIL: String
 	SALT : String
+	SALDO : Integer
+	PIC : String
 end
 
 class EVENT
 attributes
+	TITLE : String
 end
 
 class COMMENT
 attributes
+	TEXT : String
 end
 
 class CATEGORY
 attributes
+	NAME : String
 end
 
 --AssociationClasses
@@ -29,12 +34,14 @@ associationclass FOLLOWS between
 	USER[*] role follower
 	USER[*] role following
 attributes
+	SUBSCRIBED : Boolean
 end
 
 associationclass ATTENDS between
 	USER[*]
 	EVENT[*]
 attributes
+	POINTS : Integer
 end
 
 associationclass LIKINGS between
