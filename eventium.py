@@ -172,6 +172,17 @@ def postUser():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+@app.route("/user/<name>", methods = ['GET'])
+def getUser(name):
+	finder = UserFinder.Instance()
+	row = finder.findByName(name)
+	if (row):
+		info = tupleToJson(row) #row es un gateway cualquiera
+		resp = Response(info, status=200, mimetype="application/json")	
+	else:
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
+	return resp
+
 @app.route("/user/<id>/follows", methods = ['POST'])
 def postUserFollows(id):
 	followedId = request.form['followed']
