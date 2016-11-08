@@ -87,7 +87,7 @@ def postEvent():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-@app.route("/event/<eventid>/comments", methods = ['GET'])
+@app.route("/events/<eventid>/comments", methods = ['GET'])
 def getEventsComment(eventid):
 	finder = FinderComment.Instance()
 	rows = finder.findByEvent(eventid)
@@ -110,7 +110,7 @@ def postEventComment(eventid):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-@app.route("/event/<eventid>/valoration", methods = ['POST'])
+@app.route("/events/<eventid>/valoration", methods = ['POST'])
 def postEventValoration(eventid):
 	points = request.form['points']
 	userid = request.form['userid']
@@ -122,18 +122,6 @@ def postEventValoration(eventid):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-
-@app.route("/events", methods = ['GET'])
-def getEventsTitle():
-	titulo = request.headers['titulo']
-	finder = EventFinder.Instance()
-	rows = finder.getTitulo(titulo)
-	if (rows): # si no es nulo
-		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
-		resp = Response(info, status=200, mimetype="application/json")
-	else:
-		resp = Response(msgNotFound, status=404,  mimetype="application/json")
-	return resp
 
 @app.route("/events", methods = ['GET'])
 def getEvents():
@@ -172,13 +160,15 @@ def postUser():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-@app.route("/user/<name>", methods = ['GET'])
+@app.route("/users/<name>", methods = ['GET'])
 def getUser(name):
 	finder = UserFinder.Instance()
 	row = finder.findByName(name)
 	if (row):
 		info = tupleToJson(row) #row es un gateway cualquiera
-		resp = Response(info, status=200, mimetype="application/json")	
+		return Response(info, status=200, mimetype="application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")		
 
 @app.route("/user/<id>/follows", methods = ['GET'])
 def getUserFollows(id):

@@ -12,7 +12,7 @@ class GatewayValoration:
 		self.eventid = eventid
 
 	def insert(self):
-		query = "INSERT INTO \"VALORATION\" (\"POINTS\", \"USERID\", \"EVENTID\") VALUES (%s ,%s, %s)"
+		query = "INSERT INTO \"COMMENT\" (\"POINTS\", \"USERID\", \"EVENTID\") VALUES (%s ,%s, %s)"
 		values = (self.points, self.userid, self.eventid)
 		return UtilsBD.Instance().executeInsert(query,values)
 

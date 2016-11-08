@@ -11,7 +11,7 @@ class FinderComment:
 	def __init__(self):
 		pass
 	def findByEvent(self, eventid):
-		query = "SELECT * FROM \"COMMENT\" WHERE \"EVENTID\" = %s"
+		query = "SELECT \"TEXT\",\"USERID\",\"EVENTID\" FROM \"COMMENT\" WHERE \"EVENTID\" = %s"
 		values = (eventid,)
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
