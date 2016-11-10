@@ -75,10 +75,19 @@ def sendMail():
 
 @app.route("/event", methods = ['POST'])
 def postEvent():
+
 	id = request.form['id']
 	organizerId = request.form['organizerId']
 	title = request.form['title']
-	newEvent = EventGateway(id,organizerId,title)
+	horaf = request.form['hora_fin']
+	horai = request.form['hora_ini']
+	fechaf = request.form['fecha_fin']
+	fechai = request.form['fecha_ini']
+	precio = request.form['precio']
+	pic = request.form['pic']
+	ciudad = request.form['ciudad']
+	print 'oly'
+	newEvent = EventGateway(id,organizerId,title, horaf, horai , fechaf, fechai, precio, pic, ciudad)
 	error = newEvent.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
