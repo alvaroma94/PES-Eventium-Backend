@@ -24,7 +24,14 @@ CREATE TABLE "FOLLOWS" (
 CREATE TABLE "EVENT" (
 	"ID" serial NOT NULL PRIMARY KEY,
 	"ORGANIZERID" int NOT NULL REFERENCES "USER"("ID"),
-        "TITLE" varchar(255) NOT NULL
+        "TITLE" varchar(255) NOT NULL,
+	"FECHA_INI" varchar(255) ,
+	"FECHA_FIN" varchar(255) ,
+	"HORA_INI" varchar(255) ,
+	"HORA_FIN" varchar(255) ,
+	"PRECIO"   float ,
+	"PIC"	   text,
+	"CIUDAD"   varchar(255)
 );
 
 CREATE TABLE "COMMENT" (
