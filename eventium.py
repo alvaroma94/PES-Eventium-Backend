@@ -19,9 +19,15 @@ from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
 
+#esto es para el token
+from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from flask.ext.httpauth import HTTPBasicAuth
+from itsdangerous import TimedSerializer
+auth = HTTPBasicAuth()
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'holaquetal'
 mail = Mail(app)
 app.config.update(
 	DEBUG=True,
@@ -38,6 +44,7 @@ connection = Connection.Instance()
 connection.connect()
 
 msgNotFound = json.dumps({ 'status' : 'Not found'})
+msgNoPermission = json.dumps({ 'status' : 'No permission'})
 msgCreatedOK = json.dumps({ 'status': 'Created'})
 msgAlreadyExists = json.dumps({'status' : 'Already exists' })
 msgDeletedOK = json.dumps({ 'status': 'Deleted'})
@@ -55,6 +62,51 @@ except psycopg2.ProgrammingError as err:
 	print err
 	cursor.close()
 	connection.rollback()
+
+# https://blog.miguelgrinberg.com/post/restful-authentication-with-flask
+def generate_auth_token(mid):
+    s = Serializer(app.config['SECRET_KEY'])
+    token = s.dumps({'id': mid})
+    return token
+
+def verify_auth_token(token):
+    s = Serializer(app.config['SECRET_KEY'])
+    try:
+        data = s.loads(token)
+    except SignatureExpired:
+    	print 'signature expired'
+        return False # valid token, but expired
+    except BadSignature:
+    	print 'bad signature'
+        return False # invalid token
+    return data['id'] #devuelve el id asociado a ese token
+
+@app.route("/login", methods = ['POST'])
+def login():
+	username = request.form['username']
+	password = request.form['password']
+	finder = UserFinder.Instance()
+	row = finder.findForLogin(username,password)
+	if (row):
+		mid = row.id
+		print 'la id es ', mid
+		info = tupleToJson(row)
+		infoToken = {'token' : generate_auth_token(mid)}
+		print 'info token', infoToken
+		aux = json.dumps(infoToken)
+		return Response(json.dumps(aux,info), status=200,  mimetype="application/json")
+	return Response(msgNotFound, status=404,  mimetype="application/json")
+
+@app.route("/users/<id>/perfil", methods = ['GET'])
+def getPerfilUser(id):
+	token = request.headers['token']
+	idCorresponiente = verify_auth_token(token)
+	print 'id corresponde a' , idCorresponiente, 'mi id es', id
+	if int(idCorresponiente) == int(id):
+		return Response(json.dumps({'id':id}), status=200,  mimetype="application/json")
+	else: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+
 @app.route("/mail", methods = ['GET'])
 def sendMail():
 	clave = request.headers['clave']

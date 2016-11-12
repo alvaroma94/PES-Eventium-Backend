@@ -49,3 +49,20 @@ class UserFinder:
 			return user
 		return t
 
+	def findForLogin(self, username, password):
+		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s and  \"PASSWORD\" = %s"
+		values = (username, password)
+		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
+		if (t):
+			user = UserGateway(id = t[0], username = t[1], password =None, mail = t[3], pic = t[6])
+			return user
+		return t
+
+	def findById(self, id):
+		query = "SELECT * FROM \"USER\" WHERE \"ID\" = %s"
+		values = (id,)
+		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
+		if (t):
+			user = UserGateway(id = t[0], username = t[1], password =t[2], mail = t[3], pic = t[6])
+			return user
+		return t
