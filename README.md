@@ -21,6 +21,7 @@ poner host 0.0.0.0 implica que el server ahora es accesible a través de la ip d
 - Librerías que usamos:
  - flask (librería que proporciona el server)
  - psycopg2 (librería de postresql para python)
+ - itsdangerous (para la gestion de token)
 
 - Forzar cierre del proceso python flask en windows desde cmd:
  - "Taskkill /IM python.exe /F"
