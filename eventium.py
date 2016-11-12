@@ -21,9 +21,7 @@ import json
 
 #esto es para el token
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
-from flask.ext.httpauth import HTTPBasicAuth
-from itsdangerous import TimedSerializer
-auth = HTTPBasicAuth()
+
 
 
 app = Flask(__name__)
