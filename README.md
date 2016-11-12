@@ -2,6 +2,13 @@
 IP server 10.4.41.168
 
 
+### COMO FUNCIONA EL LOGIN ###
+
+hacer una peticion POST a /login. campos del form username y password.
+esto devuelve un token
+este token se pasa en el header poniendo el nombre token
+si no es válido devuelve un error http 401
+
 La versión de python que usamos es la 2.7.X
 
 - Tutorial para postgres con python 
