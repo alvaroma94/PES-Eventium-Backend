@@ -9,6 +9,7 @@ esto devuelve un token
 este token se pasa en el header poniendo el nombre token
 si no es válido devuelve un error http 401
 
+### OTRAS COSAS ###
 La versión de python que usamos es la 2.7.X
 
 - Tutorial para postgres con python 
