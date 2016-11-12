@@ -4,10 +4,9 @@ IP server 10.4.41.168
 
 ### COMO FUNCIONA EL LOGIN ###
 
-hacer una peticion POST a /login. campos del form username y password.
-esto devuelve un token
-este token se pasa en el header poniendo el nombre token
-si no es válido devuelve un error http 401
+- Hacer una peticion POST a /login con campos en form username y password.
+- La peticion anterior (si es correcta) devuelve un token, si no un error 404.
+- El token se pasa en el header (nombre token) a las peticiones q requieran autentificacón.
 
 ### OTRAS COSAS ###
 La versión de python que usamos es la 2.7.X
