@@ -132,7 +132,7 @@ def sendMail():
 		return Response(msgBadMail, status=404,  mimetype="application/json")
 	
 
-@app.route("/event", methods = ['POST'])
+@app.route("/events", methods = ['POST'])
 def postEvent():
 
 	id = request.form['id']
@@ -145,8 +145,9 @@ def postEvent():
 	precio = request.form['precio']
 	pic = request.form['pic']
 	ciudad = request.form['ciudad']
+	categoria = request.form['categoria']
 
-	newEvent = EventGateway(id,organizerId,title, horaf, horai , fechaf, fechai, precio, pic, ciudad)
+	newEvent = EventGateway(id,organizerId,title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria)
 	error = newEvent.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
@@ -154,6 +155,7 @@ def postEvent():
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
+
 
 @app.route("/events/<eventid>/comments", methods = ['GET'])
 def getEventsComment(eventid):
@@ -222,13 +224,14 @@ def getUsers():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
-@app.route("/user", methods = ['POST'])
+@app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
 	password = request.form['password']
 	mail = request.form['mail']
 	pic = request.form['pic']
-	newUser = UserGateway(None, username, password, mail, pic)
+	saldo = request.form['saldo']
+	newUser = UserGateway(None, username, password, mail, pic,saldo)
 	error = newUser.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")

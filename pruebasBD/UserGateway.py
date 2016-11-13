@@ -5,7 +5,7 @@ from utilsBD import UtilsBD
 
 #patron row data gateway (cada instancia de la clase es una fila de la bd)
 class UserGateway:
-	def __init__(self, id, username, password, mail, pic = None, wallet = None, verified = False):
+	def __init__(self, id, username, password, mail, pic , wallet , verified = False):
 		#variables privadas de la clase
 		self.id = id
 		self.username = username
@@ -22,8 +22,8 @@ class UserGateway:
 		return self.username
 
 	def insert(self):
-		query = "INSERT INTO \"USER\"   (\"USERNAME\" , \"PASSWORD\" , \"MAIL\", \"PIC\", \"VERIFIED\" ) VALUES (%s, %s, %s, %s, %s)"
-		values = (self.username, self.password, self.mail, self.pic, self.verified)
+		query = "INSERT INTO \"USER\"   (\"USERNAME\" , \"PASSWORD\" , \"MAIL\", \"PIC\", \"VERIFIED\", \"SALDO\" ) VALUES (%s, %s, %s, %s, %s, %s)"
+		values = (self.username, self.password, self.mail, self.pic, self.verified, self.wallet)
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def update(self):
