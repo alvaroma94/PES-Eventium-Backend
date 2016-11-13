@@ -10,7 +10,7 @@ from connection import Connection
 c = Connection.Instance().connect()
 
 # Open a file
-fo = open("./Schema/test.txt", "r")
+fo = open("./Schema/Declarations.txt", "r")
 str = fo.read();
 #print "Read String is : ", str
 # Close opend file

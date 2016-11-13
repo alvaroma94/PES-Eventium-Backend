@@ -1,11 +1,12 @@
-﻿CREATE TABLE "USER" (
+﻿;CREATE TABLE "USER" (
 	"ID" serial PRIMARY KEY,
 	"USERNAME" varchar(255) NOT NULL UNIQUE,
 	"PASSWORD" varchar(255) NOT NULL,
 	"MAIL" varchar(255) NOT NULL UNIQUE,
 	"SALT" varchar(255), /*NOT NULL*/ /*POR AHORA NO USAREMOS SALT*/
 	"SALDO" int, 
-	"PIC" text
+	"PIC" text,
+	"VERIFIED" boolean
 );
 
 CREATE TABLE "FOLLOWS" (
