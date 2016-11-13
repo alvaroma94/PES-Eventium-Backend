@@ -15,6 +15,6 @@ class CategoriesFinder:
 		query = "SELECT \"CATEGORYID\" FROM \"LIKINGS\" WHERE \"USERID\" = %s"
 		values = (id,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
-		print 'categorias : ', t
-		categories = CategoriesGateway(id = id, categories = t)
-		return categories
+		categories = []
+		if t: categories = [int(c[0]) for c in t]
+		return CategoriesGateway(id = id, categories = categories)

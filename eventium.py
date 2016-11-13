@@ -320,6 +320,12 @@ def setUserCategories(id):
 	CategoriesGateway(int(id), l).update()
 	return Response(msgUpdatedOK,status=200, mimetype="application/json")
 
+@app.route("/users/<id>/categories", methods = ['GET'])
+def getUserCategories(id):
+	row = CategoriesFinder.Instance().findById(int(id))
+	result = tupleToJson(row)
+	return Response(result, status=200, mimetype="application/json")
+
 @app.route("/")
 def hello():
     return "Hello World!"

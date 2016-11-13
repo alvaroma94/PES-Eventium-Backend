@@ -23,6 +23,6 @@ class CategoriesGateway:
 		return None #siempre sale bien
 
 	def toTuple(self):
-		info = {"id" : self.id, "categories" : {}}
-		return info
+		print 'esta es la l q tengo', self.categories
+		return {"id" : self.id, "categories" : self.categories}
 
