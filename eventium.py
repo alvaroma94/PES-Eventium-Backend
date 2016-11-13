@@ -288,6 +288,17 @@ def putUserWallet(id):
 
 	return Response(msgUpdatedOK, status=200, mimetype="application/json")
 
+@app.route("/users/<id>/verified", methods = ['PUT'])
+def putUserVerified(id):
+	isVerified = request.form['verified']
+	user = UserFinder.Instance().findById(id)
+	user.verified = isVerified
+	error = user.update()
+	if error == None:
+		return Response(msgUpdatedOK, status=200, mimetype="application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")
+
 @app.route("/")
 def hello():
     return "Hello World!"

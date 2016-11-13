@@ -25,6 +25,11 @@ class UserGateway:
 		query = "INSERT INTO \"USER\"   (\"USERNAME\" , \"PASSWORD\" , \"MAIL\", \"PIC\", \"VERIFIED\" ) VALUES (%s, %s, %s, %s, %s)"
 		values = (self.username, self.password, self.mail, self.pic, self.verified)
 		return UtilsBD.Instance().executeInsert(query,values)
+
+	def update(self):
+		query = "UPDATE \"USER\"  SET \"VERIFIED\" = %s WHERE \"ID\" = %s"
+		values = (self.verified, self.id)
+		return UtilsBD.Instance().executeUpdate(query,values)
 					
 	def updateWallet(self):
 		query = "UPDATE \"USER\" SET \"SALDO\" = %s WHERE \"ID\" = %s"
