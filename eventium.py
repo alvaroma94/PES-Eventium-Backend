@@ -145,7 +145,7 @@ def postEvent():
 	precio = request.form['precio']
 	pic = request.form['pic']
 	ciudad = request.form['ciudad']
-	print 'oly'
+
 	newEvent = EventGateway(id,organizerId,title, horaf, horai , fechaf, fechai, precio, pic, ciudad)
 	error = newEvent.insert()
 	if error == None:
@@ -193,6 +193,15 @@ def postEventValoration(eventid):
 
 @app.route("/events", methods = ['GET'])
 def getEvents():
+
+	fecha_ini = request.args.get('fecha_ini')
+	fecha_fin = request.args.get('fecha_fin')
+	hora_ini = request.args.get('hora_ini')
+	hora_fin = request.args.get('hora_fin')
+	titulo = request.args.get('titulo')
+	precio = request.args.get('precio')
+	ciudad = request.args.get('ciudad')
+
 	finder = EventFinder.Instance()
 	rows = finder.getAll()
 	if (rows): # si no es nulo
