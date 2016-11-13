@@ -313,8 +313,10 @@ def setUserCategories(id):
 	categories = request.form['categories']
 	# formato en el form : 1,2,3,4
 	categories.encode('ascii', 'ignore')
-	l = categories.split(',')
-	l = [int(i) for i in l] # lo paso a enteros
+	l = []
+	if (categories != ""):
+		l = categories.split(',')
+		l = [int(i) for i in l] # lo paso a enteros
 	CategoriesGateway(int(id), l).update()
 	return Response(msgUpdatedOK,status=200, mimetype="application/json")
 
