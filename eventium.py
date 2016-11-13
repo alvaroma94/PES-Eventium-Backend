@@ -15,6 +15,8 @@ from gatewayComment import GatewayComment
 from gatewayValoration import GatewayValoration
 from gatewayFollowing import GatewayFollowing
 from finderFollowing import FinderFollowing
+from CategoriesGateway import CategoriesGateway
+from CategoriesFinder import CategoriesFinder
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -50,6 +52,8 @@ msgUpdatedOK = json.dumps({ 'status': 'Updated'})
 msgTypeError = json.dumps({'status' : 'Type Error'})
 msgGoodMail= json.dumps({'status' : 'La password ha sido enviada a tu mail'})
 msgBadMail= json.dumps({'status' : 'El usuario o mail no existe'})
+
+categories = json.dumps({'1' : 'artistico', '2' : 'automobilistico', '3' : 'cinematografico', '4' : 'deportivo', '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
 #si no existe la tabla la creo
 try:
 	cursor = connection.cursor()
@@ -78,6 +82,11 @@ def verify_auth_token(token):
     	print 'bad signature'
         return False # invalid token
     return data['id'] #devuelve el id asociado a ese token
+
+
+@app.route("/categories", methods = ['GET'])
+def getCategories():
+	return Response(categories, status=200,  mimetype="application/json")
 
 @app.route("/login", methods = ['POST'])
 def login():
@@ -298,6 +307,16 @@ def putUserVerified(id):
 		return Response(msgUpdatedOK, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
+
+@app.route("/users/<id>/categories", methods = ['PUT'])
+def setUserCategories(id):
+	categories = request.form['categories']
+	# formato en el form : 1,2,3,4
+	categories.encode('ascii', 'ignore')
+	l = categories.split(',')
+	l = [int(i) for i in l] # lo paso a enteros
+	CategoriesGateway(int(id), l).update()
+	return Response(msgUpdatedOK,status=200, mimetype="application/json")
 
 @app.route("/")
 def hello():
