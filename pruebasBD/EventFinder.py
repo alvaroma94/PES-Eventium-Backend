@@ -49,8 +49,35 @@ class EventFinder:
 			elif cont > 0:
 				query = query + " \"TITULO\" ILIKE '%s' AND" % (titulo)
 
-		print 'jejejej'
-		print query
+		if fecha_ini != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"FECHA_INI\" >= '%s' " % (fecha_ini)
+			elif cont > 0:
+				query = query + " \"FECHA_INI\" >= '%s' AND" % (fecha_ini)
+
+		if fecha_fin != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"FECHA_FIN\" <= '%s' " % (fecha_fin)
+			elif cont > 0:
+				query = query + " \"FECHA_FIN\" <= '%s' AND" % (fecha_fin)
+
+		if hora_fin != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"HORA_FIN\" <= '%s' " % (hora_fin)
+			elif cont > 0:
+				query = query + " \"HORA_FIN\" <= '%s' AND" % (hora_fin)
+
+		if hora_ini != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"HORA_INI\" >= '%s' " % (hora_ini)
+			elif cont > 0:
+				query = query + " \"HORA_INI\" >= '%s' AND" % (hora_ini)
+
+
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
