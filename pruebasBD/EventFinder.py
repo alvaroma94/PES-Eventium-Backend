@@ -11,8 +11,46 @@ class EventFinder:
 	def __init__(self):
 		pass
 
-	def getAll(self):
-		query = "SELECT * FROM \"EVENT\""
+	def getAll(self,fecha_ini, fecha_fin, hora_ini, hora_fin, titulo ,precio ,ciudad):
+		cont = 0
+		if fecha_ini != None: cont = cont + 1
+		if fecha_fin != None: cont = cont + 1
+		if hora_ini != None: cont = cont + 1
+		if hora_fin != None: cont = cont + 1
+		if titulo != None: cont = cont + 1
+		if precio != None: cont = cont + 1
+		if ciudad != None: cont = cont + 1
+
+
+		if cont == 0 :
+			query = "SELECT * FROM \"EVENT\" "
+		else :
+			query = "SELECT * FROM \"EVENT\" WHERE"
+
+
+		if ciudad != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"CIUDAD\" ILIKE '%s' " % (ciudad)
+			elif cont > 0:
+				query = query + " \"CIUDAD\" ILIKE '%s' AND" % (ciudad)
+
+		if precio != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"PRECIO\" = '%s' " % (precio)
+			elif cont > 0:
+				query = query + " \"PRECIO\" = '%s' AND" % (precio)
+
+		if titulo != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"TITULO\" ILIKE '%s' " % (titulo)
+			elif cont > 0:
+				query = query + " \"TITULO\" ILIKE '%s' AND" % (titulo)
+
+		print 'jejejej'
+		print query
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:

@@ -203,7 +203,7 @@ def getEvents():
 	ciudad = request.args.get('ciudad')
 
 	finder = EventFinder.Instance()
-	rows = finder.getAll()
+	rows = finder.getAll(fecha_ini, fecha_fin, hora_ini, hora_fin, titulo, precio, ciudad)
 	if (rows): # si no es nulo
 		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
 		resp = Response(info, status=200, mimetype="application/json")
