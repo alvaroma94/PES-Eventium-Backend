@@ -26,7 +26,7 @@ class UserFinder:
 		values = (username,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
-			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], verified = t[7])
+			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7])
 			return user
 		return t
 
@@ -35,7 +35,7 @@ class UserFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], verified = t[7])
+			test = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7])
 			ret.append(test)
 		return ret
 
@@ -45,7 +45,7 @@ class UserFinder:
 		values = (clave, clave)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
-			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], verified = t[7])
+			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7])
 			return user
 		return t
 

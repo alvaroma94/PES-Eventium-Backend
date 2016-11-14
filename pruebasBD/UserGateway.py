@@ -37,7 +37,7 @@ class UserGateway:
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def toTuple(self):
-		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "verified":self.verified}
+		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "saldo" : self.wallet, "verified":self.verified}
 		return info
 
 	def toWallet(self):
