@@ -44,7 +44,7 @@ connection = Connection.Instance()
 connection.connect()
 
 msgNotFound = json.dumps({'code' : 404, 'status' : 'Not found'})
-msgNoPermission = json.dumps({ 'status' : 'No permission'})
+msgNoPermission = json.dumps({ 'code' : 401, 'status' : 'No permission'})
 msgCreatedOK = json.dumps({ 'code' : 201, 'status': 'Created'})
 msgAlreadyExists = json.dumps({ 'code' : 200, 'status' : 'Already exists' })
 msgDeletedOK = json.dumps({ 'status': 'Deleted'})
@@ -81,7 +81,11 @@ def verify_auth_token(token):
     except BadSignature:
     	print 'bad signature'
         return False # invalid token
-    return data['id'] #devuelve el id asociado a ese token
+	id = data['id']
+	finder = UserFinder.Instance()
+	row = finder.findById(id)
+	if not row: return False
+    else: return data['id']#devuelve el id asociado a ese token
 
 @app.route("/categories", methods = ['GET'])
 def getCategories():
@@ -138,8 +142,9 @@ def sendMail():
 #-https://www.postgresql.org/docs/9.1/static/datatype-datetime.html
 @app.route("/events", methods = ['POST'])
 def postEvent():
-	id = request.form['id']
-	organizerId = request.form['organizerId']
+	token = request.headers['token']
+	organizerId = verify_auth_token(token)
+	if not organizerId: return Response(msgNoPermission, status=401,  mimetype="application/json")
 	title = request.form['title']
 	horaf = request.form['hora_fin']
 	horai = request.form['hora_ini']
@@ -149,7 +154,7 @@ def postEvent():
 	pic = request.form['pic']
 	ciudad = request.form['ciudad']
 	categoria = request.form['categoria']
-	newEvent = EventGateway(id,organizerId,title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria)
+	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria)
 	error = newEvent.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
@@ -344,82 +349,6 @@ def getUserCategories(id):
 	result = tupleToJson(row)
 	return Response(result, status=200, mimetype="application/json")
 	
-'''
-#Pending
-@app.route("/")
-def hello():
-    return "Hello World!"
-#Pending
-@app.route("/tests", methods = ['GET'])
-def getTests():
-	finder = FinderTest.Instance()
-	rows = finder.getAll()
-	if (rows): # si no es nulo
-		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
-		resp = Response(info, status=200, mimetype="application/json")
-	else:
-		resp = Response(msgNotFound, status=404,  mimetype="application/json")
-	return resp
-#Pending
-@app.route("/test/<id>", methods = ['GET'])
-def getTest(id):
-	finder = FinderTest.Instance()
-	row = finder.find(id)
-	if (row):
-		info = tupleToJson(row) #row es un gateway cualquiera
-		resp = Response(info, status=200, mimetype="application/json")	
-	else:
-		resp = Response(msgNotFound, status=404,  mimetype="application/json")
-	return resp
-#Pending
-@app.route("/test", methods = ['POST'])
-def postTest():
-	id = request.form['id']
-	num = request.form['num']
-	data = request.form['data']
-	newTest = GatewayTest(id,num,data)
-	error = newTest.insert()
-	if error == None:
-		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
-	elif error == psycopg2.IntegrityError:
-		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
-	elif error == psycopg2.DataError:
-		return Response(msgTypeError, status = 400, mimetype="application/json")
-
-#Pending
-@app.route("/test", methods = ['DELETE'])
-def deleteTest():
-	print 'delete'
-	id = request.form['id']
-	print id
-	finder = FinderTest.Instance()
-	test = finder.find(id)
-	print test
-	if (test):
-		print 'lo voy a borrar'
-		test.remove()
-		return Response(msgDeletedOK, status = 201, mimetype = "application/json")
-	else:
-		return Response(msgNotFound, status=404,  mimetype="application/json")
-#Pending
-@app.route("/test", methods = ['PUT'])
-def updateTest():
-	id = request.form['id']
-	finder = FinderTest.Instance()
-	test = finder.find(id)
-	if(test):
-		num = request.form['num']
-		data = request.form['data']
-		test.num = num
-		test.data = data
-		error = test.update()
-		if error == None: 
-			return Response(msgUpdatedOK, status = 201, mimetype = "application/json")
-		elif error == psycopg2.DataError:
-			return Response(msgTypeError, status = 400, mimetype = "application/json")
-	else:
-		return Response(msgNotFound, status=404,  mimetype="application/json")
-'''
 if __name__ == "__main__":
 	while True:
 		try:
