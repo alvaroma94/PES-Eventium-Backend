@@ -5,7 +5,7 @@ from utilsBD import UtilsBD
 
 #patron row data gateway (cada instancia de la clase es una fila de la bd)
 class EventGateway:
-	def __init__(self, id, organizerId, title, horaf, horai,fechaf,fechai,precio,pic,ciudad,categoria):
+	def __init__(self, id, organizerId, title ="", horaf ="", horai ="",fechaf ="",fechai ="",precio="",pic ="",ciudad="",categoria=""):
 		#variables privadas de la clase
 		self.id = id
 		self.organizerId = organizerId
