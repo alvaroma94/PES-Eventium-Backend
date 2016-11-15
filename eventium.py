@@ -87,6 +87,13 @@ def verify_auth_token(token):
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
 
+@app.route("/whoAmI", methods = ['GET'])
+def whoAmI():
+	id = verify_auth_token(request.headers['token'])
+	if (not id): return Response(msgNotFound, status=404,  mimetype="application/json")
+	msg = {'id':id}
+	return Response(json.dumps(msg), status=200,  mimetype="application/json")
+
 #Pending
 @app.route("/login", methods = ['POST'])
 def login():
@@ -97,7 +104,7 @@ def login():
 	if (row):
 		mid = row.id
 		print 'la id es ', mid
-		infoToken = {'id':mid, 'token' : generate_auth_token(mid)}
+		infoToken = {'token' : generate_auth_token(mid)}
 		print 'info token', infoToken
 		return Response(json.dumps(infoToken), status=200,  mimetype="application/json")
 	return Response(msgNotFound, status=404,  mimetype="application/json")
