@@ -2,8 +2,7 @@
 # as a demonstration of an API spec in YAML
 swagger: '2.0'
 info:
-  title: Uber API
-  description: Move your app forward with the Uber API
+  title: Eventium API
   version: "1.0.0"
 # the domain of the service
 host: 10.4.41.168:5000
