@@ -53,7 +53,7 @@ msgTypeError = json.dumps({'code' : 400, 'status' : 'Type Error'})
 msgGoodMail= json.dumps({'code' : 200, 'status' : 'La password ha sido enviada a tu mail'})
 msgBadMail= json.dumps({'code' : 404, 'status' : 'El usuario o mail no existe'})
 
-categories = json.dumps({'1' : 'artistico', '2' : 'automobilistico', '3' : 'cinematografico', '4' : 'deportivo', '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
+categories = json.dumps({'0' : 'artistico', '1' : 'automobilistico', '2' : 'cinematografico', '3' : 'deportivo', '4' : 'gastronomico' , '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
 #si no existe la tabla la creo
 try:
 	cursor = connection.cursor()
@@ -91,6 +91,13 @@ def verify_auth_token(token):
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
 
+@app.route("/me", methods = ['GET'])
+def me():
+	id = verify_auth_token(request.headers['token'])
+	if (not id): return Response(msgNotFound, status=404,  mimetype="application/json")
+	msg = {'id':id}
+	return Response(json.dumps(msg), status=200,  mimetype="application/json")
+
 #Pending
 @app.route("/login", methods = ['POST'])
 def login():
@@ -101,11 +108,9 @@ def login():
 	if (row):
 		mid = row.id
 		print 'la id es ', mid
-		info = tupleToJson(row)
 		infoToken = {'token' : generate_auth_token(mid)}
 		print 'info token', infoToken
-		aux = json.dumps(infoToken)
-		return Response(json.dumps(aux,info), status=200,  mimetype="application/json")
+		return Response(json.dumps(infoToken), status=200,  mimetype="application/json")
 	return Response(msgNotFound, status=404,  mimetype="application/json")
 
 #Pending
@@ -174,7 +179,7 @@ def getEventsComment(eventid):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 #Pending
-@app.route("/event/<eventid>/comment", methods = ['POST'])
+@app.route("/events/<eventid>/comment", methods = ['POST'])
 def postEventComment(eventid):
 	text = request.form['text']
 	userid = request.form['userid']
@@ -230,15 +235,14 @@ def getUsers():
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
-
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
 	password = request.form['password']
 	mail = request.form['mail']
 	pic = request.form['pic']
-	saldo = request.form['saldo']
-	newUser = UserGateway(None, username, password, mail, pic,saldo)
+	#saldo = request.form['saldo']
+	newUser = UserGateway(None, username, password, mail, pic)
 	error = newUser.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
@@ -257,7 +261,7 @@ def getUser(name):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")		
 #Pending
-@app.route("/user/<id>/follows", methods = ['GET'])
+@app.route("/users/<id>/follows", methods = ['GET'])
 def getUserFollows(id):
 	rows = FinderFollowing.Instance().find(id)
 	if (rows): # si no es nulo
@@ -267,7 +271,7 @@ def getUserFollows(id):
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 #Pending
-@app.route("/user/<id>/follows", methods = ['POST'])
+@app.route("/users/<id>/follows", methods = ['POST'])
 def postUserFollows(id):
 	followedId = request.form['followed']
 	newFollows = GatewayFollowing(id, followedId)
@@ -279,7 +283,7 @@ def postUserFollows(id):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 #Pending
-@app.route("/user/<id>/follows/<followed>", methods = ['DELETE'])
+@app.route("/users/<id>/follows/<followed>", methods = ['DELETE'])
 def deleteUserFollows(id, followed):
 	follows = GatewayFollowing(id, followed)
 	error = follows.remove()
@@ -288,7 +292,7 @@ def deleteUserFollows(id, followed):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 #Pending
-@app.route("/user/<id>/subscription/<followed>", methods = ['PUT'])
+@app.route("/users/<id>/subscription/<followed>", methods = ['PUT'])
 def putUserSubscription(id, followed):
 	subscribed = request.form['subscribed']
 	finder = FinderFollowing.Instance()
@@ -301,7 +305,7 @@ def putUserSubscription(id, followed):
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 #Pending
 #Algun error al hacer la query
-@app.route("/user/<id>/wallet", methods = ['PUT'])
+@app.route("/users/<id>/wallet", methods = ['PUT'])
 def putUserWallet(id):
 	cardNumber = request.form['card']
 	cvc = request.form['cvc']
