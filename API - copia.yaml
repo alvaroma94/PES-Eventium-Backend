@@ -1,0 +1,338 @@
+# this is an example of the Uber API
+# as a demonstration of an API spec in YAML
+swagger: '2.0'
+info:
+  title: Eventium API
+  version: "1.0.0"
+# the domain of the service
+host: 10.4.41.168:5000
+# array of all schemes that your API supports
+schemes: 
+  - http
+# will be prefixed to all paths
+basePath: /
+produces:
+  - application/json
+paths:
+  /categories:
+    get:
+      summary: List of categories
+      description: |
+        The categories endpoint returns information about the categories
+        in the system. The response includes the names of all 11 categories.
+      tags:
+        - Categories
+      responses:
+        200:
+          description: An object with all the categories identified by numbers (1 to 11)
+          schema:
+              $ref: '#/definitions/Category'
+        500:
+          description: Internal server error
+  /users:
+    get:
+        summary: List of all users
+        tags:
+          - Users
+        responses:
+          200:
+            description: An array containing all the users registered
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/User'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+    post:
+      summary: Creates new users
+      tags:
+        - Users
+      parameters:
+        - name: username
+          in: formData
+          description: Name of the user.
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: Password of the user.
+          required: true
+          type: string
+        - name: mail
+          in: formData
+          description: Email of the user.
+          required: true
+          type: string
+        - name: pic
+          in: formData
+          description: Picture of the user encoded in base64 as a string.
+          required: true
+          type: string
+        - name: saldo
+          in: formData
+          required: true
+          type: integer
+      responses:
+        201:
+          description: User created correctly
+          schema:
+              $ref: '#/definitions/Response'
+        400:
+          description: Type error, some of the parameter types sent might be wrong
+          schema:
+              $ref: '#/definitions/Response'
+        500:
+          description: Internal server error
+  /events:
+    get:
+        deprecated: true
+        summary: Gets an array with all the events 
+        tags:
+          - Events
+        responses:
+          200:
+            description: Events retrieved correctly
+            schema:
+                $ref: '#/definitions/Event'
+          404:
+            description: No events found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error  
+
+  /mail:
+    get:
+        summary: Sends an email to the user or email specified
+        tags:
+          - Users
+        parameters:
+        - name: clave
+          in: header
+          description: Username or email
+          required: True
+          type: string
+        responses:
+          200:
+            description: Mail sent correctly
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No users or emails found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error   
+            
+  /users/{name}:
+    get:
+        summary: Get a single user
+        tags:
+          - Users
+        parameters:
+        - name: name
+          in: path
+          description: Username
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing the users
+            schema:
+                $ref: '#/definitions/User'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+            
+  /users/{id}/wallet:
+    get:
+        deprecated: true
+        summary: Update the user money
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: cardNumber
+          in: formData
+          required: True
+          type: number
+        - name: cvc
+          in: formData
+          required: True
+          type: string
+        - name: money
+          in: formData
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing the users
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+            
+  /users/{id}/verified/{verified}:
+    get:
+        deprecated: true
+        summary: Update the verified status of the user
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: verified
+          in: path
+          description: true or false
+          required: True
+          type: boolean
+        responses:
+          200:
+            description: An array containing the users
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+
+  /users/{id}/categories:
+    get:
+        deprecated: true
+        summary: Get the categories this user likes
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing the categories
+            schema:
+                $ref: '#/definitions/Category'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error    
+    put:
+        summary: Update the categories this user likes
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: categories
+          in: formData
+          description: New categories, integers separated by commas eg. 1,2,3
+          required: True
+          type: string
+        responses:
+          200:
+            description: Categories correctly updated
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error           
+            
+            
+        
+definitions:
+  Category:
+    type: array
+    items:
+      type: string
+    properties:
+      id:
+        type: string
+        description: Name of the category identified by a number from 1 to 11
+  Response:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: Response code
+      status:
+        type: string
+        description: Response message
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Unique user identifier
+      username:
+        type: string
+        description: Unique user name
+      password:
+        type: string
+      mail:
+        type: string
+        description: Unique user email
+      pic:
+        type: string
+        description: User picture encoded in base64
+      saldo:
+        type: integer
+      verified:
+        type: boolean
+  Event:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Unique event identifier
+      organizerId:
+        type: string
+        description: Unique user identifier
+      title:
+        type: string
+      pic:
+        type: string
+        description: Base64 encoded event picture
+      ciudad:
+        type: string
+      precio:
+        type: number
+      categoria:
+        type: integer
+        description: Category identifier
+      hora_ini:
+        type: integer
+      hora_fin:
+        type: integer
+      fecha_ini:
+        type: string
+      fecha_fin:
+        type: string
