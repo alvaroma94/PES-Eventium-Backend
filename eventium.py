@@ -97,11 +97,9 @@ def login():
 	if (row):
 		mid = row.id
 		print 'la id es ', mid
-		info = tupleToJson(row)
-		infoToken = {'token' : generate_auth_token(mid)}
+		infoToken = {'id':mid, 'token' : generate_auth_token(mid)}
 		print 'info token', infoToken
-		aux = json.dumps(infoToken)
-		return Response(json.dumps(aux,info), status=200,  mimetype="application/json")
+		return Response(json.dumps(infoToken), status=200,  mimetype="application/json")
 	return Response(msgNotFound, status=404,  mimetype="application/json")
 
 #Pending
