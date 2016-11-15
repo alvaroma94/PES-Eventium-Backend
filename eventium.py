@@ -91,6 +91,7 @@ def verify_auth_token(token):
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
 
+	#pending
 @app.route("/me", methods = ['GET'])
 def me():
 	id = verify_auth_token(request.headers['token'])
@@ -142,9 +143,6 @@ def sendMail():
 		return Response(msgBadMail, status=404,  mimetype="application/json")
 	
 #Pending
-#Id is serial no hay que pasarla como parametro
-#deberia guardarse como datetime las fechas
-#-https://www.postgresql.org/docs/9.1/static/datatype-datetime.html
 @app.route("/events", methods = ['POST'])
 def postEvent():
 	token = request.headers['token']
@@ -178,7 +176,7 @@ def getEventsComment(eventid):
 		return Response(info, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-#Pending
+#Pending,falta token
 @app.route("/events/<eventid>/comment", methods = ['POST'])
 def postEventComment(eventid):
 	text = request.form['text']
@@ -191,7 +189,7 @@ def postEventComment(eventid):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-#Pending
+#Pending, falta token
 @app.route("/events/<eventid>/valoration", methods = ['POST'])
 def postEventValoration(eventid):
 	points = request.form['points']
@@ -204,7 +202,8 @@ def postEventValoration(eventid):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-#Pending
+
+#Pending, queda cambiar filtros en precio
 @app.route("/events", methods = ['GET'])
 def getEvents():
 
@@ -225,6 +224,7 @@ def getEvents():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
+#pending, queda quitar pssword
 @app.route("/users", methods = ['GET'])
 def getUsers():
 	finder = UserFinder.Instance()
