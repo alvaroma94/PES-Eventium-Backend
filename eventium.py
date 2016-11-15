@@ -53,7 +53,7 @@ msgTypeError = json.dumps({'code' : 400, 'status' : 'Type Error'})
 msgGoodMail= json.dumps({'code' : 200, 'status' : 'La password ha sido enviada a tu mail'})
 msgBadMail= json.dumps({'code' : 404, 'status' : 'El usuario o mail no existe'})
 
-categories = json.dumps({'1' : 'artistico', '2' : 'automobilistico', '3' : 'cinematografico', '4' : 'deportivo', '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
+categories = json.dumps({'0' : 'artistico', '1' : 'automobilistico', '2' : 'cinematografico', '3' : 'deportivo', '4' : 'gastronomico' , '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
 #si no existe la tabla la creo
 try:
 	cursor = connection.cursor()
@@ -169,7 +169,7 @@ def getEventsComment(eventid):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 #Pending
-@app.route("/event/<eventid>/comment", methods = ['POST'])
+@app.route("/events/<eventid>/comment", methods = ['POST'])
 def postEventComment(eventid):
 	text = request.form['text']
 	userid = request.form['userid']
@@ -225,15 +225,14 @@ def getUsers():
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
-
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
 	password = request.form['password']
 	mail = request.form['mail']
 	pic = request.form['pic']
-	saldo = request.form['saldo']
-	newUser = UserGateway(None, username, password, mail, pic,saldo)
+	#saldo = request.form['saldo']
+	newUser = UserGateway(None, username, password, mail, pic)
 	error = newUser.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
@@ -252,7 +251,7 @@ def getUser(name):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")		
 #Pending
-@app.route("/user/<id>/follows", methods = ['GET'])
+@app.route("/users/<id>/follows", methods = ['GET'])
 def getUserFollows(id):
 	rows = FinderFollowing.Instance().find(id)
 	if (rows): # si no es nulo
@@ -262,7 +261,7 @@ def getUserFollows(id):
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 #Pending
-@app.route("/user/<id>/follows", methods = ['POST'])
+@app.route("/users/<id>/follows", methods = ['POST'])
 def postUserFollows(id):
 	followedId = request.form['followed']
 	newFollows = GatewayFollowing(id, followedId)
@@ -274,7 +273,7 @@ def postUserFollows(id):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 #Pending
-@app.route("/user/<id>/follows/<followed>", methods = ['DELETE'])
+@app.route("/users/<id>/follows/<followed>", methods = ['DELETE'])
 def deleteUserFollows(id, followed):
 	follows = GatewayFollowing(id, followed)
 	error = follows.remove()
@@ -283,7 +282,7 @@ def deleteUserFollows(id, followed):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 #Pending
-@app.route("/user/<id>/subscription/<followed>", methods = ['PUT'])
+@app.route("/users/<id>/subscription/<followed>", methods = ['PUT'])
 def putUserSubscription(id, followed):
 	subscribed = request.form['subscribed']
 	finder = FinderFollowing.Instance()
@@ -296,7 +295,7 @@ def putUserSubscription(id, followed):
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 #Pending
 #Algun error al hacer la query
-@app.route("/user/<id>/wallet", methods = ['PUT'])
+@app.route("/users/<id>/wallet", methods = ['PUT'])
 def putUserWallet(id):
 	cardNumber = request.form['card']
 	cvc = request.form['cvc']
@@ -344,82 +343,7 @@ def getUserCategories(id):
 	result = tupleToJson(row)
 	return Response(result, status=200, mimetype="application/json")
 	
-'''
-#Pending
-@app.route("/")
-def hello():
-    return "Hello World!"
-#Pending
-@app.route("/tests", methods = ['GET'])
-def getTests():
-	finder = FinderTest.Instance()
-	rows = finder.getAll()
-	if (rows): # si no es nulo
-		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
-		resp = Response(info, status=200, mimetype="application/json")
-	else:
-		resp = Response(msgNotFound, status=404,  mimetype="application/json")
-	return resp
-#Pending
-@app.route("/test/<id>", methods = ['GET'])
-def getTest(id):
-	finder = FinderTest.Instance()
-	row = finder.find(id)
-	if (row):
-		info = tupleToJson(row) #row es un gateway cualquiera
-		resp = Response(info, status=200, mimetype="application/json")	
-	else:
-		resp = Response(msgNotFound, status=404,  mimetype="application/json")
-	return resp
-#Pending
-@app.route("/test", methods = ['POST'])
-def postTest():
-	id = request.form['id']
-	num = request.form['num']
-	data = request.form['data']
-	newTest = GatewayTest(id,num,data)
-	error = newTest.insert()
-	if error == None:
-		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
-	elif error == psycopg2.IntegrityError:
-		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
-	elif error == psycopg2.DataError:
-		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-#Pending
-@app.route("/test", methods = ['DELETE'])
-def deleteTest():
-	print 'delete'
-	id = request.form['id']
-	print id
-	finder = FinderTest.Instance()
-	test = finder.find(id)
-	print test
-	if (test):
-		print 'lo voy a borrar'
-		test.remove()
-		return Response(msgDeletedOK, status = 201, mimetype = "application/json")
-	else:
-		return Response(msgNotFound, status=404,  mimetype="application/json")
-#Pending
-@app.route("/test", methods = ['PUT'])
-def updateTest():
-	id = request.form['id']
-	finder = FinderTest.Instance()
-	test = finder.find(id)
-	if(test):
-		num = request.form['num']
-		data = request.form['data']
-		test.num = num
-		test.data = data
-		error = test.update()
-		if error == None: 
-			return Response(msgUpdatedOK, status = 201, mimetype = "application/json")
-		elif error == psycopg2.DataError:
-			return Response(msgTypeError, status = 400, mimetype = "application/json")
-	else:
-		return Response(msgNotFound, status=404,  mimetype="application/json")
-'''
 if __name__ == "__main__":
 	while True:
 		try:
