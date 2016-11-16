@@ -27,7 +27,8 @@ CREATE TABLE "EVENT" (
 	"PRECIO"   float ,
 	"PIC"	   text,
 	"CIUDAD"   varchar(255),
-	"CATEGORIA"   varchar(255)
+	"CATEGORIA"   varchar(255),
+	"DESTACADO" boolean
 
 );
 
