@@ -19,12 +19,12 @@ paths:
       summary: List of categories
       description: |
         The categories endpoint returns information about the categories
-        in the system. The response includes the names of all 11 categories.
+        in the system. The response includes the names of all 12 categories.
       tags:
         - Categories
       responses:
         200:
-          description: An object with all the categories identified by numbers (1 to 11)
+          description: An object with all the categories identified by numbers (0 to 11)
           schema:
               $ref: '#/definitions/Category'
         500:
@@ -72,10 +72,7 @@ paths:
           description: Picture of the user encoded in base64 as a string.
           required: true
           type: string
-        - name: saldo
-          in: formData
-          required: true
-          type: integer
+
       responses:
         201:
           description: User created correctly
@@ -90,7 +87,32 @@ paths:
   /events:
     get:
         deprecated: true
-        summary: Gets an array with all the events 
+        summary: Gets an array with all the events filtered by the query params values
+        parameters:
+          - name: fecha_ini
+            in: query
+            description: starting date (YYYY/MM/DD)
+            type: string
+          - name: fecha_fin
+            in: query
+            description: ending date (YYYY/MM/DD)
+            type: string
+          - name: hora_ini
+            in: query
+            description: starting hour (HH:MM)
+            type: string
+          - name: titulo
+            in: query
+            description: name of the event
+            type: string
+          - name: precio
+            in: query
+            description: price of the event
+            type: string
+          - name: ciudad
+            in: query
+            description: city of the event
+            type: string
         tags:
           - Events
         responses:
@@ -141,11 +163,11 @@ paths:
           type: string
         responses:
           200:
-            description: An array containing the users
+            description: User Info
             schema:
                 $ref: '#/definitions/User'
           404:
-            description: No users found
+            description: No user found
             schema:
                 $ref: '#/definitions/Response'
           500:
@@ -154,7 +176,7 @@ paths:
   /users/{id}/wallet:
     get:
         deprecated: true
-        summary: Update the user money
+        summary: Update the user's wallet
         tags:
           - Users
         parameters:
@@ -171,54 +193,24 @@ paths:
           in: formData
           required: True
           type: string
-        - name: money
+        - name: money (positive or negative)
           in: formData
           required: True
-          type: string
+          type: integer
         responses:
           200:
-            description: An array containing the users
+            description: Wallet updated correctly
             schema:
                 $ref: '#/definitions/Response'
           404:
-            description: No users found
+            description: No user found
             schema:
                 $ref: '#/definitions/Response'
           500:
             description: Internal server error
             
-  /users/{id}/verified/{verified}:
-    get:
-        deprecated: true
-        summary: Update the verified status of the user
-        tags:
-          - Users
-        parameters:
-        - name: id
-          in: path
-          description: User id
-          required: True
-          type: string
-        - name: verified
-          in: path
-          description: true or false
-          required: True
-          type: boolean
-        responses:
-          200:
-            description: An array containing the users
-            schema:
-                $ref: '#/definitions/Response'
-          404:
-            description: No users found
-            schema:
-                $ref: '#/definitions/Response'
-          500:
-            description: Internal server error
-
   /users/{id}/categories:
     get:
-        deprecated: true
         summary: Get the categories this user likes
         tags:
           - Users
@@ -234,7 +226,7 @@ paths:
             schema:
                 $ref: '#/definitions/Category'
           404:
-            description: No users found
+            description: No user found
             schema:
                 $ref: '#/definitions/Response'
           500:
@@ -251,7 +243,7 @@ paths:
           type: string
         - name: categories
           in: formData
-          description: New categories, integers separated by commas eg. 1,2,3
+          description: New categories, integers separated by commas eg. 1,2,4
           required: True
           type: string
         responses:
@@ -260,7 +252,7 @@ paths:
             schema:
                 $ref: '#/definitions/Response'
           404:
-            description: No users found
+            description: No user found
             schema:
                 $ref: '#/definitions/Response'
           500:
@@ -280,9 +272,6 @@ definitions:
   Response:
     type: object
     properties:
-      code:
-        type: integer
-        description: Response code
       status:
         type: string
         description: Response message
@@ -336,3 +325,5 @@ definitions:
         type: string
       fecha_fin:
         type: string
+      destacado:
+        type: boolean
