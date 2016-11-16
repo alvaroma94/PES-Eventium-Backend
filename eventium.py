@@ -235,6 +235,8 @@ def getUsers():
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
+
+#actualizar documentacion
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
@@ -245,7 +247,9 @@ def postUser():
 	newUser = UserGateway(None, username, password, mail, pic)
 	error = newUser.insert()
 	if error == None:
-		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
+		mid = UserFinder.Instance().findForLogin(username,password).id
+		infoToken = {'token' : generate_auth_token(mid)}
+		return Response(json.dumps(infoToken), status = 201, mimetype = "application/json")
 	elif error == psycopg2.IntegrityError:
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
