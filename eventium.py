@@ -91,7 +91,7 @@ def verify_auth_token(token):
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
 
-	#pending
+
 @app.route("/me", methods = ['GET'])
 def me():
 	id = verify_auth_token(request.headers['token'])
@@ -99,7 +99,6 @@ def me():
 	msg = {'id':id}
 	return Response(json.dumps(msg), status=200,  mimetype="application/json")
 
-#Pending
 @app.route("/login", methods = ['POST'])
 def login():
 	username = request.form['username']
