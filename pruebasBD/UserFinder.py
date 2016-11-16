@@ -35,7 +35,7 @@ class UserFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7])
+			test = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7], banned = t[8])
 			ret.append(test)
 		return ret
 

@@ -5,7 +5,7 @@ from utilsBD import UtilsBD
 
 #patron row data gateway (cada instancia de la clase es una fila de la bd)
 class UserGateway:
-	def __init__(self, id, username = "", password = "", mail = "", pic = "" , wallet = 0 , verified = False):
+	def __init__(self, id, username = "", password = "", mail = "", pic = "" , wallet = 0 , verified = False,  banned = False):
 		#variables privadas de la clase
 		self.id = id
 		self.username = username
@@ -14,6 +14,7 @@ class UserGateway:
 		self.pic = pic
 		self.wallet = wallet
 		self.verified = verified
+		self.banned = banned
 	def getPassword(self):    
 		return self.password
 	def getMail(self):
@@ -27,8 +28,8 @@ class UserGateway:
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def update(self):
-		query = "UPDATE \"USER\"  SET \"VERIFIED\" = %s, \"PASSWORD\" = %s, \"PIC\" = %s WHERE \"ID\" = %s"
-		values = (self.verified, self.password, self.pic, self.id)
+		query = "UPDATE \"USER\"  SET \"VERIFIED\" = %s, \"PASSWORD\" = %s, \"PIC\" = %s, \"BANNED\" = %s WHERE \"ID\" = %s"
+		values = (self.verified, self.password, self.pic, self.banned, self.id)
 		return UtilsBD.Instance().executeUpdate(query,values)
 					
 	def updateWallet(self):
@@ -37,7 +38,7 @@ class UserGateway:
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def toTuple(self):
-		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "saldo" : self.wallet, "verified":self.verified}
+		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "saldo" : self.wallet, "verified":self.verified, "banned":self.banned}
 		return info
 
 	def toWallet(self):

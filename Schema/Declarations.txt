@@ -6,7 +6,8 @@
 	"SALT" varchar(255), /*NOT NULL*/ /*POR AHORA NO USAREMOS SALT*/
 	"SALDO" int, 
 	"PIC" text,
-	"VERIFIED" boolean
+	"VERIFIED" boolean,
+	"BANNED" boolean DEFAULT FALSE
 );
 
 CREATE TABLE "FOLLOWS" (
