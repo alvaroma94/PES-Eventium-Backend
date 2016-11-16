@@ -14,61 +14,308 @@ basePath: /
 produces:
   - application/json
 paths:
-  /categories:
+  /events:
     get:
-      summary: List of categories
-      description: |
-        The categories endpoint returns information about the categories
-        in the system. The response includes the names of all 12 categories.
-      tags:
-        - Categories
-      responses:
-        200:
-          description: An object with all the categories identified by numbers (0 to 11)
-          schema:
-              $ref: '#/definitions/Category'
-        500:
-          description: Internal server error
-  /me:
-    get:
-      summary: get the user id given a token
-      description: |
-        Given a valid token returns de user id associated
-      tags:
-        - Users
-      responses:
-        200:
-          description: An object with the id
-          schema:
-            $ref: '#/definitions/UserId'
-        500:
-          description: Internal server errors
-  /login:
+        summary: Gets an array of events based on the filters specified
+        tags:
+          - Events
+        parameters:
+          - name: fecha_ini
+            in: query
+            type: string
+            description: Future events to this date
+          - name: fecha_fin
+            in: query
+            type: string
+            description: Past events to this date
+          - name: hora_ini
+            in: query
+            type: string
+            description: Future events to this time
+          - name: hora_fin
+            in: query
+            type: string
+            description: Past events to this time
+          - name: titulo
+            in: query
+            type: string
+          - name: precioMin
+            in: query
+            type: integer
+            description: Minimum prize of the events retrieved
+          - name: precioMax
+            in: query
+            type: integer
+            description: Maximum prize of the events retrieved
+          - name: ciudad
+            in: query
+            type: string
+          - name: categoria
+            in: query
+            type: integer
+            description: Category identifier
+        responses:
+          200:
+            description: Events retrieved correctly
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/Event'
+          400:
+            description: Bad request
+          404:
+            description: No events found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
     post:
-      summary: login into the system
-      description: |
-        Given username and a password log into into the system returning a session token
-      tags:
-        - Users
-      parameters:
-        - name: username
-          in: formData
-          description: Name of the user.
-          required: true
+        summary: Updates the information of one event
+        tags:
+          - Events
+        parameters:
+        - name: token
+          in: header
+          description: title
+          required: True
           type: string
-        - name: password
+        - name: title
           in: formData
-          description: Password of the user.
-          required: true
+          required: False
           type: string
-      responses:
-        200:
-          description: An object with the token
-          schema:
-            $ref: '#/definitions/Token'
-        500:
-          description: Internal server errors
-          
+        - name: hora_ini
+          in: formData
+          required: False
+          type: string
+        - name: hora_fin
+          in: formData
+          required: False
+          type: string
+        - name: fecha_ini
+          in: formData
+          description: The format of the date must be in the order Year, month and then day
+          required: False
+          type: string
+        - name: fecha_fin
+          in: formData
+          description: The format of the date must be in the order Year, month and then day
+          required: False
+          type: string
+        - name: precio
+          in: formData
+          required: False
+          type: string
+        - name: pic
+          in: formData
+          description: Event picture encoded in base64
+          required: False
+          type: string
+        - name: ciudad
+          in: formData
+          required: False
+          type: string
+        - name: categoria
+          in: formData
+          description: Id of the event category (1 to 11)
+          required: False
+          type: string
+        - name: destacado
+          in: formData
+          required: False
+          type: boolean
+          description: True or False (first letter capitalized)
+        responses:
+          201:
+            description: Event created correctly
+            schema:
+                $ref: '#/definitions/Response'
+          200:
+            description: Event already exist
+            schema:
+                $ref: '#/definitions/Response'
+          400:
+            description: Bad request, there are parameters missing or the type of the parameters was not correct
+          500:
+            description: Internal server error
+  /events/{id}:
+    put:
+        summary: Gets an array with all the events 
+        tags:
+          - Events
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        - name: token
+          in: header
+          description: title
+          required: True
+          type: string
+        - name: title
+          in: formData
+          required: False
+          type: string
+        - name: hora_ini
+          in: formData
+          required: False
+          type: string
+        - name: hora_fin
+          in: formData
+          required: False
+          type: string
+        - name: fecha_ini
+          in: formData
+          description: The format of the date must be in the order Year, month and then day
+          required: False
+          type: string
+        - name: fecha_fin
+          in: formData
+          description: The format of the date must be in the order Year, month and then day
+          required: False
+          type: string
+        - name: precio
+          in: formData
+          required: False
+          type: string
+        - name: pic
+          in: formData
+          description: Event picture encoded in base64
+          required: False
+          type: string
+        - name: ciudad
+          in: formData
+          required: False
+          type: string
+        - name: categoria
+          in: formData
+          description: Id of the event category (1 to 11)
+          required: False
+          type: string
+        - name: destacado
+          in: formData
+          required: False
+          type: boolean
+          description: True or False (first letter capitalized)
+        responses:
+          200:
+            description: Events retrieved correctly
+            schema:
+                $ref: '#/definitions/Event'
+          404:
+            description: No events found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error  
+  /events/destacados:
+    get:
+        summary: Gets all the promoted events
+        tags:
+          - Events
+        responses:
+          200:
+            description: Events retrieved correctly
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/Event'
+          500:
+            description: Internal server error
+  /events/{id}/comments:
+    get:
+        summary: Gets an array with the comments of one event
+        tags:
+          - Events
+          - Comments
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        responses:
+          200:
+            description: Comments retrieved correctly
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/Comment'
+          404:
+            description: Comments not found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error  
+    post:
+        deprecated: true
+        summary: Creates a new comment
+        tags:
+          - Events
+          - Comments
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        - name: token
+          in: header
+          description: title
+          required: True
+          type: string
+        - name: text
+          in: formData
+          required: True
+          type: string
+        responses:
+          201:
+            description: Comment created correctly
+            schema:
+                $ref: '#/definitions/Response'
+          200:
+            description: Comment already exists
+            schema:
+                $ref: '#/definitions/Response'
+          400:
+            description: Bad request (might not return the Response object)
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error  
+  /events/{id}/valoration:
+    post:
+        deprecated: true
+        summary: Valorates one event
+        tags:
+          - Events
+          - Comments
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        - name: points
+          in: formData
+          required: True
+          type: string
+        responses:
+          201:
+            description: Valoration created correctly
+            schema:
+                $ref: '#/definitions/Response'
+          200:
+            description: Valoration already exists
+            schema:
+                $ref: '#/definitions/Response'
+          400:
+            description: Bad request (might not return the Response object)
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error  
   /users:
     get:
         summary: List of all users
@@ -112,61 +359,202 @@ paths:
           description: Picture of the user encoded in base64 as a string.
           required: true
           type: string
-
       responses:
         201:
           description: User created correctly
           schema:
-              $ref: '#/definitions/Response'
+              $ref: '#/definitions/Token'
+        200:
+          description: User already exists
+          schema:
+            $ref: '#/definitions/Response'
         400:
           description: Type error, some of the parameter types sent might be wrong
           schema:
               $ref: '#/definitions/Response'
         500:
           description: Internal server error
-  /events:
+  /users/{name}:
     get:
-        deprecated: true
-        summary: Gets an array with all the events filtered by the query params values
-        parameters:
-          - name: fecha_ini
-            in: query
-            description: starting date (YYYY/MM/DD)
-            type: string
-          - name: fecha_fin
-            in: query
-            description: ending date (YYYY/MM/DD)
-            type: string
-          - name: hora_ini
-            in: query
-            description: starting hour (HH:MM)
-            type: string
-          - name: titulo
-            in: query
-            description: name of the event
-            type: string
-          - name: precio
-            in: query
-            description: price of the event
-            type: string
-          - name: ciudad
-            in: query
-            description: city of the event
-            type: string
+        summary: Get a single user
         tags:
-          - Events
+          - Users
+        parameters:
+        - name: name
+          in: path
+          description: Username
+          required: True
+          type: string
         responses:
           200:
-            description: Events retrieved correctly
+            description: An array containing the users
             schema:
-                $ref: '#/definitions/Event'
+                $ref: '#/definitions/User'
           404:
-            description: No events found
+            description: No users found
             schema:
                 $ref: '#/definitions/Response'
           500:
-            description: Internal server error  
-
+            description: Internal server error
+  /users/{id}/wallet:
+    get:
+        deprecated: true
+        summary: Update the user money
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: cardNumber
+          in: formData
+          required: True
+          type: number
+        - name: cvc
+          in: formData
+          required: True
+          type: string
+        - name: money
+          in: formData
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing the users
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+  /users/{id}/verified:
+    get:
+        deprecated: true
+        summary: Update the verified status of the user
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: verified
+          in: formData
+          description: True or False (first letter capitalized)
+          required: True
+          type: boolean
+        responses:
+          200:
+            description: An array containing the users
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+  /users/{id}/categories:
+    get:
+        deprecated: true
+        summary: Get the categories this user likes
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing the categories
+            schema:
+                $ref: '#/definitions/Category'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error    
+    put:
+        summary: Update the categories this user likes
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: categories
+          in: formData
+          description: New categories, integers separated by commas eg. 1,2,3
+          required: True
+          type: string
+        responses:
+          200:
+            description: Categories correctly updated
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error           
+  /me:
+    get:
+        summary: The current user logged in identified by the token sent
+        tags:
+          - Users
+        parameters:
+        - name: token
+          in: header
+          description: Authentication token
+          required: True
+          type: string
+        responses:
+          200:
+            description: The id of the user
+            schema:
+                $ref: '#/definitions/Id'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+  /login:
+    post:
+        summary: The current user logged in identified by the token sent
+        tags:
+          - Users
+        parameters:
+        - name: username
+          in: formData
+          required: True
+          type: string
+        - name: password
+          in: formData
+          required: True
+          type: string
+        responses:
+          200:
+            description: The id of the user
+            schema:
+                $ref: '#/definitions/Token'
+          404:
+            description: Combination not found, the username and/or password are wrong
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error 
   /mail:
     get:
         summary: Sends an email to the user or email specified
@@ -189,126 +577,44 @@ paths:
                 $ref: '#/definitions/Response'
           500:
             description: Internal server error   
-            
-  /users/{name}:
+  /categories:
     get:
-        summary: Get a single user
-        tags:
-          - Users
-        parameters:
-        - name: name
-          in: path
-          description: Username
-          required: True
-          type: string
-        responses:
-          200:
-            description: User Info
-            schema:
-                $ref: '#/definitions/User'
-          404:
-            description: No user found
-            schema:
-                $ref: '#/definitions/Response'
-          500:
-            description: Internal server error
-            
-  /users/{id}/wallet:
-    get:
-        deprecated: true
-        summary: Update the user's wallet
-        tags:
-          - Users
-        parameters:
-        - name: id
-          in: path
-          description: User id
-          required: True
-          type: string
-        - name: cardNumber
-          in: formData
-          required: True
-          type: number
-        - name: cvc
-          in: formData
-          required: True
-          type: string
-        - name: money (positive or negative)
-          in: formData
-          required: True
-          type: integer
-        responses:
-          200:
-            description: Wallet updated correctly
-            schema:
-                $ref: '#/definitions/Response'
-          404:
-            description: No user found
-            schema:
-                $ref: '#/definitions/Response'
-          500:
-            description: Internal server error
-            
-  /users/{id}/categories:
-    get:
-        summary: Get the categories this user likes
-        tags:
-          - Users
-        parameters:
-        - name: id
-          in: path
-          description: User id
-          required: True
-          type: string
-        responses:
-          200:
-            description: An array containing the categories
-            schema:
-                $ref: '#/definitions/Category'
-          404:
-            description: No user found
-            schema:
-                $ref: '#/definitions/Response'
-          500:
-            description: Internal server error    
-    put:
-        summary: Update the categories this user likes
-        tags:
-          - Users
-        parameters:
-        - name: id
-          in: path
-          description: User id
-          required: True
-          type: string
-        - name: categories
-          in: formData
-          description: New categories, integers separated by commas eg. 1,2,4
-          required: True
-          type: string
-        responses:
-          200:
-            description: Categories correctly updated
-            schema:
-                $ref: '#/definitions/Response'
-          404:
-            description: No user found
-            schema:
-                $ref: '#/definitions/Response'
-          500:
-            description: Internal server error           
-            
-            
-        
+      summary: List of categories
+      description: |
+        The categories endpoint returns information about the categories
+        in the system. The response includes the names of all 11 categories.
+      tags:
+        - Categories
+      responses:
+        200:
+          description: |
+              An object with all the categories identified by numbers.
+              
+              (eg. { '0':'Artistico', '1':'...', etc })
+          schema:
+              $ref: '#/definitions/Category'
+        500:
+          description: Internal server error
+          
 definitions:
+  Id:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: id of the user
+  Token:
+    type: object
+    properties:
+      token:
+        type: string
+        description: Authentication token
   Category:
-    type: array
-    items:
-      type: string
+    type: object
     properties:
       id:
         type: string
-        description: Name of the category identified by a number from 1 to 11
+        description: Each element is a name of a category identified by its ID (eg. { '0':'Artistico' ...}
   Response:
     type: object
     properties:
@@ -336,22 +642,7 @@ definitions:
         type: integer
       verified:
         type: boolean
-        
-  UserId:
-    type: object
-    properties:
-      id:
-        type: integer
-        description: Unique user identifier
-
-  Token:
-    type: object
-    properties:
-      id:
-        type: string
-        description: Session token without expiration date
-     
-      
+        description: will return true or false (first letter not capitalized)
   Event:
     type: object
     properties:
@@ -383,3 +674,16 @@ definitions:
         type: string
       destacado:
         type: boolean
+        description: true or false (first letter not capitalized)
+  Comment:
+    type: object
+    properties:
+      eventid:
+        type: integer
+        description: Unique event identifier
+      text:
+        type: string
+        description: Message posted
+      userid:
+        type: integer
+        description: Unique user identifier

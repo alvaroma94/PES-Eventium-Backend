@@ -131,7 +131,6 @@ def sendMail():
 	else:
 		return Response(msgBadMail, status=404,  mimetype="application/json")
 
-#pending para documentar
 @app.route("/events/<id>", methods = ['PUT'])
 def updateEvent(id):
 	token = request.headers['token']
@@ -186,7 +185,6 @@ def updateEvent(id):
 	event.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 	
-#Pending
 @app.route("/events", methods = ['POST'])
 def postEvent():
 	token = request.headers['token']
@@ -202,8 +200,8 @@ def postEvent():
 	ciudad = request.form['ciudad']
 	categoria = request.form['categoria']
 	destacado = False
-	if request.form.get('destacado'):
-		destacado = True
+	if request.form['destacado']:
+		destacado = request.form['destacado'] == 'True' 
 
 	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria, destacado)
 	error = newEvent.insert()
@@ -218,7 +216,7 @@ def postEvent():
 def getEventsDestacados():
 	rows = EventFinder.Instance().getAllDestacados()
 	return Response(tuplesToJson(rows), status = 200, mimetype="application/json")
-#Pending
+
 @app.route("/events/<eventid>/comments", methods = ['GET'])
 def getEventsComment(eventid):
 	finder = FinderComment.Instance()
@@ -228,8 +226,8 @@ def getEventsComment(eventid):
 		return Response(info, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-#Pending,falta token
-@app.route("/events/<eventid>/comment", methods = ['POST'])
+#documented with token in header and parameter text, falta comprobar token
+@app.route("/events/<eventid>/comments", methods = ['POST'])
 def postEventComment(eventid):
 	text = request.form['text']
 	userid = request.form['userid']
@@ -241,7 +239,7 @@ def postEventComment(eventid):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-#Pending, falta token
+#documented with token in header and parameter points, falta token
 @app.route("/events/<eventid>/valoration", methods = ['POST'])
 def postEventValoration(eventid):
 	points = request.form['points']
@@ -255,7 +253,6 @@ def postEventValoration(eventid):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-#Pending, queda cambiar filtros en precio
 @app.route("/events", methods = ['GET'])
 def getEvents():
 
