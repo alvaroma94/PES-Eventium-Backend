@@ -255,6 +255,8 @@ def postUser():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+
+#pending para documentar
 @app.route("/users/<id>", methods = ['PUT'])
 def updateUser(id):
 	user = UserFinder.Instance().findById(int(id))
@@ -271,14 +273,7 @@ def updateUser(id):
 		user.verified = verified == 'True'
 	user.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
-	
-	#esto para cuando se anada token a la peticion
-	#return Response(msgNotFound, status = 404, mimetype="application/json")
 
-	
-
-
-	return Response(msgTypeError, status = 400, mimetype="application/json")
 
 @app.route("/users/<name>", methods = ['GET'])
 def getUser(name):
