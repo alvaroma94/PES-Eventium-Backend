@@ -381,7 +381,7 @@ def putUserSubscription(id, followed):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
 #Pending
-#Algun error al hacer la query
+#Falta verificacion con token
 @app.route("/users/<id>/wallet", methods = ['PUT'])
 def putUserWallet(id):
 	cardNumber = request.form['card']
@@ -409,7 +409,6 @@ def setUserCategories(id):
 	CategoriesGateway(int(id), l).update()
 	return Response(msgUpdatedOK,status=200, mimetype="application/json")
 	
-#Igual quitar el id de la respuesta? ya lo tienen a la hora de enviar
 @app.route("/users/<id>/categories", methods = ['GET'])
 def getUserCategories(id):
 	row = CategoriesFinder.Instance().findById(int(id))
