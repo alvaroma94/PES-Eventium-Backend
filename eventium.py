@@ -114,16 +114,6 @@ def login():
 		return Response(json.dumps(infoToken), status=200,  mimetype="application/json")
 	return Response(msgNotFound, status=404,  mimetype="application/json")
 
-#Pending
-@app.route("/users/<id>/perfil", methods = ['GET'])
-def getPerfilUser(id):
-	token = request.headers['token']
-	idCorresponiente = verify_auth_token(token)
-	print 'id corresponde a' , idCorresponiente, 'mi id es', id
-	if int(idCorresponiente) == int(id):
-		return Response(json.dumps({'id':id}), status=200,  mimetype="application/json")
-	else: return Response(msgNoPermission, status=401,  mimetype="application/json")
-
 
 @app.route("/mail", methods = ['GET'])
 def sendMail():
