@@ -157,7 +157,11 @@ def postEvent():
 	pic = request.form['pic']
 	ciudad = request.form['ciudad']
 	categoria = request.form['categoria']
-	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria)
+	destacado = False
+	if request.form.get('destacado'):
+		destacado = True
+
+	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria, destacado)
 	error = newEvent.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
@@ -166,6 +170,10 @@ def postEvent():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+@app.route("/events/destacados", methods = ['GET'])
+def getEventsDestacados():
+	rows = EventFinder.Instance().getAllDestacados()
+	return Response(tuplesToJson(rows), status = 200, mimetype="application/json")
 #Pending
 @app.route("/events/<eventid>/comments", methods = ['GET'])
 def getEventsComment(eventid):
