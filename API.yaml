@@ -29,6 +29,46 @@ paths:
               $ref: '#/definitions/Category'
         500:
           description: Internal server error
+  /me:
+    get:
+      summary: get the user id given a token
+      description: |
+        Given a valid token returns de user id associated
+      tags:
+        - Users
+      responses:
+        200:
+          description: An object with the id
+          schema:
+            $ref: '#/definitions/UserId'
+        500:
+          description: Internal server errors
+  /login:
+    post:
+      summary: login into the system
+      description: |
+        Given username and a password log into into the system returning a session token
+      tags:
+        - Users
+      parameters:
+        - name: username
+          in: formData
+          description: Name of the user.
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: Password of the user.
+          required: true
+          type: string
+      responses:
+        200:
+          description: An object with the token
+          schema:
+            $ref: '#/definitions/Token'
+        500:
+          description: Internal server errors
+          
   /users:
     get:
         summary: List of all users
@@ -296,6 +336,22 @@ definitions:
         type: integer
       verified:
         type: boolean
+        
+  UserId:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Unique user identifier
+
+  Token:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Session token without expiration date
+     
+      
   Event:
     type: object
     properties:
