@@ -25,7 +25,11 @@ class EventGateway:
 		query = "INSERT INTO \"EVENT\" (\"ORGANIZERID\", \"TITLE\", \"FECHA_FIN\", \"FECHA_INI\", \"HORA_FIN\", \"HORA_INI\", \"PRECIO\", \"PIC\", \"CIUDAD\", \"CATEGORIA\", \"DESTACADO\") VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 		values = (self.organizerId, self.title, self.fechaf, self.fechai, self.horaf, self.horai, self.precio, self.pic, self.ciudad, self.categoria, self.destacado)
 		return UtilsBD.Instance().executeInsert(query,values)
-
+	def update(self):
+		query = "UPDATE \"EVENT\"  SET \"TITLE\" = %s, \"FECHA_INI\" = %s, \"FECHA_FIN\" = %s, \"HORA_INI\" = %s, \"HORA_FIN\" = %s, \"PRECIO\" = %s, \"PIC\" = %s, \"CIUDAD\" = %s, \"CATEGORIA\" = %s ,  \"DESTACADO\" = %s WHERE \"ID\" = %s"
+		values = (self.title, self.fechai, self.fechaf, self.horai, self.horaf, self.precio, self.pic, self.ciudad, self.categoria, self.destacado, self.id)
+		return UtilsBD.Instance().executeUpdate(query,values)
 	def toTuple(self):
 		info = {"id" : self.id, "organizerId" : self.organizerId, "title" : self.title , "fecha_ini" : self.fechai, "fecha_fin" : self.fechaf, "hora_ini" : self.horai, "hora_fin" : self.horaf, "precio" : self.precio, "pic" : self.pic, "ciudad" : self.ciudad, "categoria": self.categoria, "destacado":self.destacado}
 		return info
+
