@@ -1,6 +1,6 @@
 # PES-Eventium-Backend
 IP server 10.4.41.168
-
+sudo service postgresql restart - reinicia la BD en el server
 
 ### COMO FUNCIONA EL LOGIN ###
 
