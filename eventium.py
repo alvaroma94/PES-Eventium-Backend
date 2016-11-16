@@ -141,6 +141,61 @@ def sendMail():
 		return Response(msgGoodMail, status=200, mimetype="application/json")	
 	else:
 		return Response(msgBadMail, status=404,  mimetype="application/json")
+
+#pending para documentar
+@app.route("/events/<id>", methods = ['PUT'])
+def updateEvent(id):
+	token = request.headers['token']
+	organizerId = verify_auth_token(token)
+	if not organizerId: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	event = EventFinder.Instance().findById(int(id))
+	if(organizerId != event.organizerId) : return Response(msgNoPermission, status=401,  mimetype="application/json")
+	print 'oly'
+	print event.id
+	if request.form.get('title'):
+		title = request.form['title']
+		event.title = title
+		print 'title si'
+	if request.form.get('hora_ini'):
+		hora_ini = request.form['hora_ini']
+		event.horai= hora_ini
+		print 'si horai'
+	if request.form.get('hora_fin'):
+		hora_fin = request.form['hora_fin']
+		event.horaf= hora_fin
+		print 'si horaf'
+	if request.form.get('fecha_ini'):
+		fecha_ini = request.form['fecha_ini']
+		event.fechai= fecha_ini
+		print 'si fechai'
+	if request.form.get('fecha_fin'):
+		fecha_fin = request.form['fecha_fin']
+		event.fechaf= fecha_fin
+		print 'si fechaf'
+	if request.form.get('precio'):
+		precio = request.form['precio']
+		event.precio= precio
+		print 'si precio'
+	if request.form.get('pic'):
+		pic = request.form['pic']
+		event.pic= pic
+		print 'si pic'
+	if request.form.get('ciudad'):
+		ciudad = request.form['ciudad']
+		event.ciudad= ciudad
+		print 'si ciudad'
+	if request.form.get('categoria'):
+		categoria = request.form['categoria']
+		event.categoria= categoria
+		print 'si categoria'
+
+	if request.form.get('destacado'):
+		destacado = request.form['destacado']
+		event.destacado= destacado
+		print 'si destacado'
+	event.update()
+	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 	
 #Pending
 @app.route("/events", methods = ['POST'])
