@@ -27,8 +27,8 @@ class UserGateway:
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def update(self):
-		query = "UPDATE \"USER\"  SET \"VERIFIED\" = %s WHERE \"ID\" = %s"
-		values = (self.verified, self.id)
+		query = "UPDATE \"USER\"  SET \"VERIFIED\" = %s, \"PASSWORD\" = %s, \"PIC\" = %s WHERE \"ID\" = %s"
+		values = (self.verified, self.password, self.pic, self.id)
 		return UtilsBD.Instance().executeUpdate(query,values)
 					
 	def updateWallet(self):

@@ -255,6 +255,31 @@ def postUser():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+@app.route("/users/<id>", methods = ['PUT'])
+def updateUser(id):
+	user = UserFinder.Instance().findById(int(id))
+	if request.form.get('pic'):
+		pic = request.form['pic']
+		user.pic = pic
+		print 'pic si'
+	if request.form.get('password'):
+		password = request.form['password']
+		user.password = password
+		print 'si'
+	if request.form.get('verified'):
+		verified = request.form['verified']
+		user.verified = verified == 'True'
+	user.update()
+	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
+	
+	#esto para cuando se anada token a la peticion
+	#return Response(msgNotFound, status = 404, mimetype="application/json")
+
+	
+
+
+	return Response(msgTypeError, status = 400, mimetype="application/json")
+
 @app.route("/users/<name>", methods = ['GET'])
 def getUser(name):
 	finder = UserFinder.Instance()
@@ -323,20 +348,6 @@ def putUserWallet(id):
 	user.updateWallet()
 	return Response(msgUpdatedOK, status=200, mimetype="application/json")
 	
-#Pending
-#se podria pasar el true/false por la url
-#algun error con la query
-@app.route("/users/<id>/verified", methods = ['PUT'])
-def putUserVerified(id):
-	isVerified = request.form['verified']
-	user = UserFinder.Instance().findById(id)
-	user.verified = isVerified
-	error = user.update()
-	if error == None:
-		return Response(msgUpdatedOK, status=200, mimetype="application/json")
-	else:
-		return Response(msgNotFound, status=404,  mimetype="application/json")
-
 
 @app.route("/users/<id>/categories", methods = ['PUT'])
 def setUserCategories(id):
