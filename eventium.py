@@ -275,7 +275,7 @@ def getEvents():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
-#pending, queda quitar pssword
+#queda quitar pssword
 @app.route("/users", methods = ['GET'])
 def getUsers():
 	finder = UserFinder.Instance()
@@ -287,7 +287,6 @@ def getUsers():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
-#actualizar documentacion
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
