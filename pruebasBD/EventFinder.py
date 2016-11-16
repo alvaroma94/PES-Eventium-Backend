@@ -11,15 +11,17 @@ class EventFinder:
 	def __init__(self):
 		pass
 
-	def getAll(self,fecha_ini, fecha_fin, hora_ini, hora_fin, titulo ,precio ,ciudad):
+	def getAll(self,fecha_ini, fecha_fin, hora_ini, hora_fin, titulo ,precioMin , precioMax,ciudad,categoria):
 		cont = 0
 		if fecha_ini != None: cont = cont + 1
 		if fecha_fin != None: cont = cont + 1
 		if hora_ini != None: cont = cont + 1
 		if hora_fin != None: cont = cont + 1
 		if titulo != None: cont = cont + 1
-		if precio != None: cont = cont + 1
+		if precioMin != None: cont = cont + 1
+		if precioMax != None: cont = cont + 1
 		if ciudad != None: cont = cont + 1
+		if categoria != None: cont = cont + 1
 
 
 		if cont == 0 :
@@ -35,12 +37,19 @@ class EventFinder:
 			elif cont > 0:
 				query = query + " \"CIUDAD\" ILIKE '%s' AND" % (ciudad)
 
-		if precio != None:
+		if precioMin != None:
 			cont = cont - 1
 			if cont == 0:
-				query = query + " \"PRECIO\" = '%s' " % (precio)
+				query = query + " \"PRECIO\" >= '%s' " % (precioMin)
 			elif cont > 0:
-				query = query + " \"PRECIO\" = '%s' AND" % (precio)
+				query = query + " \"PRECIO\" >= '%s' AND" % (precioMin)
+
+		if precioMax != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"PRECIO\" <= '%s' " % (precioMax)
+			elif cont > 0:
+				query = query + " \"PRECIO\" <= '%s' AND" % (precioMax)
 
 		if titulo != None:
 			cont = cont - 1
@@ -76,6 +85,13 @@ class EventFinder:
 				query = query + " \"HORA_INI\" >= '%s' " % (hora_ini)
 			elif cont > 0:
 				query = query + " \"HORA_INI\" >= '%s' AND" % (hora_ini)
+
+		if categoria != None:
+			cont = cont - 1
+			if cont == 0:
+				query = query + " \"CATEGORIA\" >= '%s' " % (categoria)
+			elif cont > 0:
+				query = query + " \"CATEGORIA\" >= '%s' AND" % (categoria)
 
 
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
