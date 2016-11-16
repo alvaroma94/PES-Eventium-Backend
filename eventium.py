@@ -279,6 +279,9 @@ def updateUser(id):
 	if request.form.get('verified'):
 		verified = request.form['verified']
 		user.verified = verified == 'True'
+	if request.form.get('banned'):
+		banned = request.form['banned']
+		user.banned = banned == 'True'
 	user.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 
