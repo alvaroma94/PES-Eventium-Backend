@@ -91,12 +91,13 @@ def verify_auth_token(token):
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
 
-
+#pending to document now returns name too
 @app.route("/me", methods = ['GET'])
 def me():
 	id = verify_auth_token(request.headers['token'])
 	if (not id): return Response(msgNotFound, status=404,  mimetype="application/json")
-	msg = {'id':id}
+	user = UserFinder.Instance().findById(int(id))
+	msg = {'id':id, 'name':user.username}
 	return Response(json.dumps(msg), status=200,  mimetype="application/json")
 
 @app.route("/login", methods = ['POST'])
