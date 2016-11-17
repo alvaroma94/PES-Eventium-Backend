@@ -3,7 +3,7 @@
 swagger: '2.0'
 info:
   title: Eventium API
-  version: "1.0.0"
+  version: "2.0.0 Finished"
 # the domain of the service
 host: 10.4.41.168:5000
 # array of all schemes that your API supports
@@ -249,7 +249,6 @@ paths:
           500:
             description: Internal server error  
     post:
-        deprecated: true
         summary: Creates a new comment
         tags:
           - Events
@@ -286,7 +285,6 @@ paths:
             description: Internal server error  
   /events/{id}/valoration:
     post:
-        deprecated: true
         summary: Valorates one event
         tags:
           - Events
@@ -297,6 +295,10 @@ paths:
           description: Id of the event
           required: True
           type: integer
+        - name: token
+          in: header
+          required: True
+          type: string
         - name: points
           in: formData
           required: True
@@ -312,6 +314,10 @@ paths:
                 $ref: '#/definitions/Response'
           400:
             description: Bad request (might not return the Response object)
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
             schema:
                 $ref: '#/definitions/Response'
           500:
@@ -396,9 +402,177 @@ paths:
                 $ref: '#/definitions/Response'
           500:
             description: Internal server error
+  /users/{id}/:
+    put:
+        summary: Updates user information
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: Unique user id
+          required: True
+          type: string
+        - name: pic
+          in: formData
+          description: Picture encoded in Base64
+          required: false
+          type: string
+        - name: password
+          in: formData
+          required: false
+          type: string
+        - name: verified
+          in: formData
+          required: false
+          type: boolean
+        - name: banned
+          in: formData
+          required: false
+          type: boolean
+        responses:
+          200:
+            description: User correctly updated
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+  /users/{id}/follows:
+    get:
+        summary: Gets the users the current user logged in is following
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing the users followed and wether the subscription is active or not
+            schema:
+                $ref: '#/definitions/Follow'
+          404:
+            description: No follows found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+    post:
+        summary: Creates a new follow for the user logged in
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: token
+          in: header
+          required: True
+          type: string
+        - name: followed
+          description: id of the user to be followed
+          in: header
+          required: True
+          type: string
+        responses:
+          200:
+            description: This follow already exists
+            schema:
+                $ref: '#/definitions/Response'
+          201:
+            description: Follow correctly created
+            schema:
+                $ref: '#/definitions/Response'
+          400:
+            description: Bad request (this might not return a Response object)
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error 
+  /users/{id}/follows/{followedId}:
+    delete:
+        summary: Deletes a follow from the current user logged in
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: followedId
+          in: path
+          description: Id of the user followed to be deleted
+          required: True
+          type: string
+        - name: token
+          in: header
+          required: True
+          type: string
+        responses:
+          201:
+            description: User correctly deleted
+            schema:
+                $ref: '#/definitions/Follow'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No user found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+  /users/{id}/subscription/{followedId}:
+    put:
+        summary: Modifies the subscription status from a follow
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: followedId
+          in: path
+          description: Id of the user followed
+          required: True
+          type: string
+        - name: token
+          in: header
+          required: True
+          type: string
+        - name: subscribed
+          in: formData
+          required: True
+          type: boolean
+        responses:
+          200:
+            description: User correctly updated
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: No user found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
   /users/{id}/wallet:
     get:
-        deprecated: true
         summary: Update the user money
         tags:
           - Users
@@ -408,6 +582,10 @@ paths:
           description: User id
           required: True
           type: string
+        - name: token
+          in: header
+          required: True
+          type: string
         - name: cardNumber
           in: formData
           required: True
@@ -415,14 +593,19 @@ paths:
         - name: cvc
           in: formData
           required: True
-          type: string
+          type: number
         - name: money
           in: formData
           required: True
-          type: string
+          description: Ammount of money to be added to this user wallet (can be a positive or negative number)
+          type: number
         responses:
           200:
-            description: An array containing the users
+            description: Wallet updated correctly
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
             schema:
                 $ref: '#/definitions/Response'
           404:
@@ -461,7 +644,6 @@ paths:
             description: Internal server error
   /users/{id}/categories:
     get:
-        deprecated: true
         summary: Get the categories this user likes
         tags:
           - Users
@@ -687,3 +869,13 @@ definitions:
       userid:
         type: integer
         description: Unique user identifier
+  Follow:
+    type: object
+    properties:
+      followed:
+        type: boolean
+        description: Id of the user followed
+      subscribed:
+        type: boolean
+        description: Wether the user logged in is subscribed to the user followed or not
+

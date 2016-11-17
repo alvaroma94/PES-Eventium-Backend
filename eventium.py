@@ -227,9 +227,13 @@ def getEventsComment(eventid):
 		return Response(info, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-#documented with token in header and parameter text, falta comprobar token
+
 @app.route("/events/<eventid>/comments", methods = ['POST'])
 def postEventComment(eventid):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+	
 	text = request.form['text']
 	userid = request.form['userid']
 	comment = GatewayComment(text = text, userid = userid, eventid = eventid)
@@ -240,9 +244,13 @@ def postEventComment(eventid):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-#documented with token in header and parameter points, falta token
+
 @app.route("/events/<eventid>/valoration", methods = ['POST'])
 def postEventValoration(eventid):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
 	points = request.form['points']
 	userid = request.form['userid']
 	valoration = GatewayValoration(points = points, userid = userid, eventid = eventid)
@@ -335,8 +343,7 @@ def getUser(name):
 		return Response(info, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")		
-#Pending
-#bugged, todas las id's salian igual (followed: 1)
+
 @app.route("/users/<id>/follows", methods = ['GET'])
 def getUserFollows(id):
 	rows = FinderFollowing.Instance().find(id)
@@ -346,9 +353,13 @@ def getUserFollows(id):
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
-#Pending
+
 @app.route("/users/<id>/follows", methods = ['POST'])
 def postUserFollows(id):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+	
 	followedId = request.form['followed']
 	newFollows = GatewayFollowing(id, followedId)
 	error = newFollows.insert()
@@ -358,18 +369,26 @@ def postUserFollows(id):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-#Pending
+
 @app.route("/users/<id>/follows/<followed>", methods = ['DELETE'])
 def deleteUserFollows(id, followed):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
 	follows = GatewayFollowing(id, followed)
 	error = follows.remove()
 	if error == None:
 		return Response(msgDeletedOK, status = 201, mimetype = "application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-#Pending
+
 @app.route("/users/<id>/subscription/<followed>", methods = ['PUT'])
 def putUserSubscription(id, followed):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
 	subscribed = request.form['subscribed']
 	finder = FinderFollowing.Instance()
 	follows = finder.findSubscription(id,followed)
@@ -379,10 +398,13 @@ def putUserSubscription(id, followed):
 		return Response(msgUpdatedOK, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-#Pending
-#Falta verificacion con token
+
 @app.route("/users/<id>/wallet", methods = ['PUT'])
 def putUserWallet(id):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+	
 	cardNumber = request.form['card']
 	cvc = request.form['cvc']
 	money = request.form['money']
