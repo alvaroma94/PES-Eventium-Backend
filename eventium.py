@@ -97,7 +97,7 @@ def me():
 	id = verify_auth_token(request.headers['token'])
 	if (not id): return Response(msgNotFound, status=404,  mimetype="application/json")
 	user = UserFinder.Instance().findById(int(id))
-	msg = {'id':id, 'name':user.username}
+	msg = {'id':id, 'username':user.username}
 	return Response(json.dumps(msg), status=200,  mimetype="application/json")
 
 @app.route("/login", methods = ['POST'])
