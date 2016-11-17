@@ -306,8 +306,6 @@ def postUser():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-
-#pending para documentar
 @app.route("/users/<id>", methods = ['PUT'])
 def updateUser(id):
 	user = UserFinder.Instance().findById(int(id))
@@ -328,7 +326,6 @@ def updateUser(id):
 	user.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 
-
 @app.route("/users/<name>", methods = ['GET'])
 def getUser(name):
 	finder = UserFinder.Instance()
@@ -339,6 +336,7 @@ def getUser(name):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")		
 #Pending
+#bugged, todas las id's salian igual (followed: 1)
 @app.route("/users/<id>/follows", methods = ['GET'])
 def getUserFollows(id):
 	rows = FinderFollowing.Instance().find(id)

@@ -15,7 +15,7 @@ class FinderFollowing:
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = GatewayFollowing(followedId = t[0], followerId = t[1], subscribed = t[2])
+			test = GatewayFollowing(followerId = t[0], followedId = t[1], subscribed = t[2])
 			ret.append(test)
 		return ret
 
