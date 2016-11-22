@@ -1,0 +1,30 @@
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<categoryOption xmlns="http://dhis2.org/schema/dxf/2.0" code="NGO_OS_UPC" lastUpdated="2016-11-07T16:00:19.704" id="gQOIiTQE1fC" href="http://who-dev.essi.upc.edu:8085/api/categoryOptions/gQOIiTQE1fC" created="2016-07-21T01:41:20.002" name="Universitat Politecnica de Catalunya" shortName="Universitat Politecnica de Catalunya">
+<displayName>Universitat Politecnica de Catalunya</displayName>
+<publicAccess>rw------</publicAccess>
+<displayShortName>Universitat Politecnica de Catalunya</displayShortName>
+<externalAccess>false</externalAccess>
+<dimensionItem>gQOIiTQE1fC</dimensionItem>
+<startDate>2016-07-21T00:00:00.000</startDate>
+<dimensionItemType>CATEGORY_OPTION</dimensionItemType>
+<access>
+<read>true</read>
+<update>true</update>
+<externalize>false</externalize>
+<delete>true</delete>
+<write>true</write>
+<manage>true</manage>
+</access>
+<user id="M5zQapPyTZI"/>
+<categories>
+<category id="IoYW6A8qysy"/>
+<category id="RWNTr62UB5o"/>
+<category id="qRGg3pkXadD"/>
+</categories>
+<organisationUnits>
+</organisationUnits>
+<categoryOptionCombos>
+<categoryOptionCombo id="S2NvAh7oUXQ"/>
+<categoryOptionCombo id="CFOHCXBeUkQ"/>
+</categoryOptionCombos>
+</categoryOption>
