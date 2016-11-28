@@ -5,7 +5,7 @@ from utilsBD import UtilsBD
 
 #patron row data gateway (cada instancia de la clase es una fila de la bd)
 class UserGateway:
-	def __init__(self, id, username = "", password = "", mail = "", pic = "" , wallet = 0 , verified = False,  banned = False):
+	def __init__(self, id, username = "", password = "", mail = "", pic = "" , wallet = 0 , verified = False,  banned = False, valoration= ""):
 		#variables privadas de la clase
 		self.id = id
 		self.username = username
@@ -15,6 +15,7 @@ class UserGateway:
 		self.wallet = wallet
 		self.verified = verified
 		self.banned = banned
+		self.valoration = valoration
 	def getPassword(self):    
 		return self.password
 	def getMail(self):
@@ -38,7 +39,7 @@ class UserGateway:
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def toTuple(self):
-		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "saldo" : self.wallet, "verified":self.verified, "banned":self.banned}
+		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "saldo" : self.wallet, "verified":self.verified, "banned":self.banned, "valoration":str(self.valoration)}
 		return info
 
 	def toWallet(self):

@@ -5,6 +5,15 @@ from connection import Connection
 from utilsBD import UtilsBD
 import json
 
+def getValoration(id):
+	query = "SELECT AVG(\"POINTS\") FROM \"COMMENT\" c, \"EVENT\" e WHERE c.\"EVENTID\" = e.\"ID\" and e.\"ORGANIZERID\" = %s"
+	values = (id,)
+	average = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
+	if (average[0] != None):
+		 return average[0]
+	else:
+		 return ""
+
 #patron finder de Row Data Gateway
 @SingletonPattern.Singleton
 class UserFinder:
@@ -26,7 +35,7 @@ class UserFinder:
 		values = (username,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
-			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7])
+			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7], valoration = getValoration(t[0]))
 			return user
 		return t
 
@@ -35,7 +44,7 @@ class UserFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7], banned = t[8])
+			test = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7], banned = t[8], valoration = getValoration(t[0]))
 			ret.append(test)
 		return ret
 
@@ -45,7 +54,7 @@ class UserFinder:
 		values = (clave, clave)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
-			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7])
+			user = UserGateway(id = t[0], username = t[1], password = t[2], mail = t[3], pic = t[6], wallet = t[5], verified = t[7], valoration = getValoration(t[0]))
 			return user
 		return t
 
@@ -63,6 +72,6 @@ class UserFinder:
 		values = (id,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
-			user = UserGateway(id = t[0], username = t[1], password =t[2], mail = t[3], pic = t[6], verified = t[7])
+			user = UserGateway(id = t[0], username = t[1], password =t[2], mail = t[3], pic = t[6], verified = t[7], valoration = getValoration(t[0]))
 			return user
 		return t

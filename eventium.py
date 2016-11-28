@@ -245,6 +245,7 @@ def postEventComment(eventid):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+#pending to update
 @app.route("/events/<eventid>/valoration", methods = ['POST'])
 def postEventValoration(eventid):
 	token = request.headers['token']
@@ -252,7 +253,7 @@ def postEventValoration(eventid):
 	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
 
 	points = request.form['points']
-	userid = request.form['userid']
+	userid = id
 	valoration = GatewayValoration(points = points, userid = userid, eventid = eventid)
 	error = valoration.insert()
 	if error == None:
@@ -296,6 +297,7 @@ def getUsers():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
+#Update object user (Add valoration)
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
@@ -340,6 +342,17 @@ def getUser(name):
 	row = finder.findByName(name)
 	if (row):
 		info = tupleToJson(row) #row es un gateway cualquiera
+		return Response(info, status=200, mimetype="application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")	
+
+#pending to document
+@app.route("/users/<id>/events", methods = ['GET'])
+def getUserEvents(id):
+	finder = EventFinder.Instance()
+	row = finder.findByUserId(id)
+	if (row):
+		info = tuplesToJson(row) #row es un gateway cualquiera
 		return Response(info, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")		

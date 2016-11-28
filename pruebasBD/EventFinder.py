@@ -129,3 +129,13 @@ class EventFinder:
 			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11])
 			ret.append(test)
 		return ret
+
+	def findByUserId(self, id):
+		query = "SELECT * FROM \"EVENT\" WHERE \"ORGANIZERID\" = %s"
+		values = (id,)
+		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
+		ret = []
+		for t in tuples:
+			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11])
+			ret.append(test)
+		return ret
