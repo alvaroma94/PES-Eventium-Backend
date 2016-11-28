@@ -285,6 +285,16 @@ def getEvents():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
+@app.route("/events/<id>", methods = ['GET'])
+def getEvent(id):
+	finder = EventFinder.Instance()
+	row = finder.findById(id)
+	if (row):
+		info = tupleToJson(row) #row es un gateway cualquiera
+		return Response(info, status=200, mimetype="application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")	
+
 #queda quitar pssword
 @app.route("/users", methods = ['GET'])
 def getUsers():
