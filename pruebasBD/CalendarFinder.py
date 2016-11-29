@@ -18,3 +18,8 @@ class CalendarFinder:
 		for row in rows:
 			ret.append(CalendarGateway(id, row[1], row[2]))
 		return ret
+	def getEntry(self,id,eventid):
+		query = "SELECT * FROM \"CALENDAR\" WHERE \"USERID\" = %s and \"EVENTID\" = %s"
+		values = (id,eventid)
+		row = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
+		return CalendarGateway(id, row[1], row[2])

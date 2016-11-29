@@ -372,6 +372,7 @@ def addEventToUserCalendar(id):
 	if (error == None): return Response(msgCreatedOK,status=200,mimetype="application/json")
 	else: return Response(msgIntegrityError,status=400,mimetype="application/json")
 
+#pending
 @app.route("/users/<id>/calendar", methods = ['GET'])
 def getEventsFromUserCalendar(id):
 	token = request.headers['token']
@@ -381,6 +382,17 @@ def getEventsFromUserCalendar(id):
 	rows = CalendarFinder.Instance().getByUserId(miId)
 	info = tuplesToJson(rows)
 	return Response(info,status=200,mimetype="application/json")
+
+#pending
+@app.route("/users/<id>/calendar/<eventid>", methods = ['DELETE'])
+def deleteEventsFromUserCalendar(id, eventid):
+	token = request.headers['token']
+	idCorresponiente = verify_auth_token(token)
+	miId = int(id)
+	if (miId != idCorresponiente): return Response(msgNoPermission, status=401,  mimetype="application/json")
+	entry = CalendarFinder.Instance().getEntry(int(id),int(eventid))
+	entry.delete()
+	return Response(msgDeletedOK,status=200,mimetype="application/json")
 
 if __name__ == "__main__":
 	while True:

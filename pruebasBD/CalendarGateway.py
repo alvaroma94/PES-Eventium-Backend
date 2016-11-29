@@ -17,7 +17,9 @@ class CalendarGateway:
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def delete(self):
-		pass
+		query = "DELETE FROM \"CALENDAR\" WHERE \"USERID\" = %s and \"EVENTID\" = %s"
+		values = (self.userid, self.eventid)
+		UtilsBD.Instance().executeRemove(query,values)
 
 	def toTuple(self):
 		info = {"userid": self.userid, "eventid" : self.eventid, "fecha" : self.fecha}
