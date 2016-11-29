@@ -18,3 +18,7 @@ class CalendarGateway:
 
 	def delete(self):
 		pass
+
+	def toTuple(self):
+		info = {"userid": self.userid, "eventid" : self.eventid, "fecha" : self.fecha}
+		return info

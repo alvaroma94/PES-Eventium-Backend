@@ -15,6 +15,7 @@ from gatewayComment import GatewayComment
 from gatewayValoration import GatewayValoration
 from gatewayFollowing import GatewayFollowing
 from CalendarGateway import CalendarGateway
+from CalendarFinder import CalendarFinder
 from finderFollowing import FinderFollowing
 from CategoriesGateway import CategoriesGateway
 from CategoriesFinder import CategoriesFinder
@@ -370,6 +371,16 @@ def addEventToUserCalendar(id):
 	error = row.insert()
 	if (error == None): return Response(msgCreatedOK,status=200,mimetype="application/json")
 	else: return Response(msgIntegrityError,status=400,mimetype="application/json")
+
+@app.route("/users/<id>/calendar", methods = ['GET'])
+def getEventsFromUserCalendar(id):
+	token = request.headers['token']
+	idCorresponiente = verify_auth_token(token)
+	miId = int(id)
+	if (miId != idCorresponiente): return Response(msgNoPermission, status=401,  mimetype="application/json")
+	rows = CalendarFinder.Instance().getByUserId(miId)
+	info = tuplesToJson(rows)
+	return Response(info,status=200,mimetype="application/json")
 
 if __name__ == "__main__":
 	while True:
