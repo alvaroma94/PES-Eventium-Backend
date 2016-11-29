@@ -14,6 +14,7 @@ from finderComment import FinderComment
 from gatewayComment import GatewayComment
 from gatewayValoration import GatewayValoration
 from gatewayFollowing import GatewayFollowing
+from CalendarGateway import CalendarGateway
 from finderFollowing import FinderFollowing
 from CategoriesGateway import CategoriesGateway
 from CategoriesFinder import CategoriesFinder
@@ -23,6 +24,8 @@ import json
 
 #esto es para el token
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+
+# url.com?token =  kasjdasjdsa
 
 
 
@@ -52,6 +55,7 @@ msgUpdatedOK = json.dumps({'status': 'Updated'})
 msgTypeError = json.dumps({'status' : 'Type Error'})
 msgGoodMail= json.dumps({'status' : 'La password ha sido enviada a tu mail'})
 msgBadMail= json.dumps({'status' : 'El usuario o mail no existe'})
+msgIntegrityError = json.dumps({'status' : 'Error de integridad'})
 
 categories = json.dumps({'0' : 'artistico', '1' : 'automobilistico', '2' : 'cinematografico', '3' : 'deportivo', '4' : 'gastronomico' , '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
 #si no existe la tabla la creo
@@ -91,15 +95,15 @@ def verify_auth_token(token):
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
 
-#pending to document now returns name too
+	#pending
 @app.route("/me", methods = ['GET'])
 def me():
 	id = verify_auth_token(request.headers['token'])
 	if (not id): return Response(msgNotFound, status=404,  mimetype="application/json")
-	user = UserFinder.Instance().findById(int(id))
-	msg = {'username':user.username}
+	msg = {'id':id}
 	return Response(json.dumps(msg), status=200,  mimetype="application/json")
 
+#Pending
 @app.route("/login", methods = ['POST'])
 def login():
 	username = request.form['username']
@@ -113,6 +117,16 @@ def login():
 		print 'info token', infoToken
 		return Response(json.dumps(infoToken), status=200,  mimetype="application/json")
 	return Response(msgNotFound, status=404,  mimetype="application/json")
+
+#Pending
+@app.route("/users/<id>/perfil", methods = ['GET'])
+def getPerfilUser(id):
+	token = request.headers['token']
+	idCorresponiente = verify_auth_token(token)
+	print 'id corresponde a' , idCorresponiente, 'mi id es', id
+	if int(idCorresponiente) == int(id):
+		return Response(json.dumps({'id':id}), status=200,  mimetype="application/json")
+	else: return Response(msgNoPermission, status=401,  mimetype="application/json")
 
 
 @app.route("/mail", methods = ['GET'])
@@ -131,61 +145,8 @@ def sendMail():
 		return Response(msgGoodMail, status=200, mimetype="application/json")	
 	else:
 		return Response(msgBadMail, status=404,  mimetype="application/json")
-
-@app.route("/events/<id>", methods = ['PUT'])
-def updateEvent(id):
-	token = request.headers['token']
-	organizerId = verify_auth_token(token)
-	if not organizerId: return Response(msgNoPermission, status=401,  mimetype="application/json")
-
-	event = EventFinder.Instance().findById(int(id))
-	if(organizerId != event.organizerId) : return Response(msgNoPermission, status=401,  mimetype="application/json")
-	print 'oly'
-	print event.id
-	if request.form.get('title'):
-		title = request.form['title']
-		event.title = title
-		print 'title si'
-	if request.form.get('hora_ini'):
-		hora_ini = request.form['hora_ini']
-		event.horai= hora_ini
-		print 'si horai'
-	if request.form.get('hora_fin'):
-		hora_fin = request.form['hora_fin']
-		event.horaf= hora_fin
-		print 'si horaf'
-	if request.form.get('fecha_ini'):
-		fecha_ini = request.form['fecha_ini']
-		event.fechai= fecha_ini
-		print 'si fechai'
-	if request.form.get('fecha_fin'):
-		fecha_fin = request.form['fecha_fin']
-		event.fechaf= fecha_fin
-		print 'si fechaf'
-	if request.form.get('precio'):
-		precio = request.form['precio']
-		event.precio= precio
-		print 'si precio'
-	if request.form.get('pic'):
-		pic = request.form['pic']
-		event.pic= pic
-		print 'si pic'
-	if request.form.get('ciudad'):
-		ciudad = request.form['ciudad']
-		event.ciudad= ciudad
-		print 'si ciudad'
-	if request.form.get('categoria'):
-		categoria = request.form['categoria']
-		event.categoria= categoria
-		print 'si categoria'
-
-	if request.form.get('destacado'):
-		destacado = request.form['destacado']
-		event.destacado= destacado
-		print 'si destacado'
-	event.update()
-	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 	
+#Pending
 @app.route("/events", methods = ['POST'])
 def postEvent():
 	token = request.headers['token']
@@ -200,11 +161,7 @@ def postEvent():
 	pic = request.form['pic']
 	ciudad = request.form['ciudad']
 	categoria = request.form['categoria']
-	destacado = False
-	if request.form['destacado']:
-		destacado = request.form['destacado'] == 'True' 
-
-	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria, destacado)
+	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria)
 	error = newEvent.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
@@ -213,11 +170,7 @@ def postEvent():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-@app.route("/events/destacados", methods = ['GET'])
-def getEventsDestacados():
-	rows = EventFinder.Instance().getAllDestacados()
-	return Response(tuplesToJson(rows), status = 200, mimetype="application/json")
-
+#Pending
 @app.route("/events/<eventid>/comments", methods = ['GET'])
 def getEventsComment(eventid):
 	finder = FinderComment.Instance()
@@ -227,13 +180,9 @@ def getEventsComment(eventid):
 		return Response(info, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-
-@app.route("/events/<eventid>/comments", methods = ['POST'])
+#Pending,falta token
+@app.route("/events/<eventid>/comment", methods = ['POST'])
 def postEventComment(eventid):
-	token = request.headers['token']
-	id = verify_auth_token(token)
-	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
-	
 	text = request.form['text']
 	userid = request.form['userid']
 	comment = GatewayComment(text = text, userid = userid, eventid = eventid)
@@ -244,16 +193,11 @@ def postEventComment(eventid):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-
-#pending to update
+#Pending, falta token
 @app.route("/events/<eventid>/valoration", methods = ['POST'])
 def postEventValoration(eventid):
-	token = request.headers['token']
-	id = verify_auth_token(token)
-	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
-
 	points = request.form['points']
-	userid = id
+	userid = request.form['userid']
 	valoration = GatewayValoration(points = points, userid = userid, eventid = eventid)
 	error = valoration.insert()
 	if error == None:
@@ -263,6 +207,7 @@ def postEventValoration(eventid):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+#Pending, queda cambiar filtros en precio
 @app.route("/events", methods = ['GET'])
 def getEvents():
 
@@ -271,13 +216,12 @@ def getEvents():
 	hora_ini = request.args.get('hora_ini')
 	hora_fin = request.args.get('hora_fin')
 	titulo = request.args.get('titulo')
-	precioMin = request.args.get('precioMin')
-	precioMax = request.args.get('precioMax')
+	precio = request.args.get('precio')
 	ciudad = request.args.get('ciudad')
-	categoria = request.args.get('categoria')
 
 	finder = EventFinder.Instance()
-	rows = finder.getAll(fecha_ini, fecha_fin, hora_ini, hora_fin, titulo, precioMin, precioMax,ciudad, categoria)
+	#self,fecha_ini, fecha_fin, hora_ini, hora_fin, titulo ,precioMin , precioMax,ciudad,categoria
+	rows = finder.getAll(fecha_ini, fecha_fin, hora_ini, hora_fin, titulo, precio, precio,ciudad, categoria = None)
 	if (rows): # si no es nulo
 		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
 		resp = Response(info, status=200, mimetype="application/json")
@@ -285,17 +229,7 @@ def getEvents():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
-@app.route("/events/<id>", methods = ['GET'])
-def getEvent(id):
-	finder = EventFinder.Instance()
-	row = finder.findById(id)
-	if (row):
-		info = tupleToJson(row) #row es un gateway cualquiera
-		return Response(info, status=200, mimetype="application/json")
-	else:
-		return Response(msgNotFound, status=404,  mimetype="application/json")	
-
-#queda quitar pssword
+#pending, queda quitar pssword
 @app.route("/users", methods = ['GET'])
 def getUsers():
 	finder = UserFinder.Instance()
@@ -306,8 +240,6 @@ def getUsers():
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
-
-#Update object user (Add valoration)
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
@@ -318,33 +250,11 @@ def postUser():
 	newUser = UserGateway(None, username, password, mail, pic)
 	error = newUser.insert()
 	if error == None:
-		mid = UserFinder.Instance().findForLogin(username,password).id
-		infoToken = {'token' : generate_auth_token(mid)}
-		return Response(json.dumps(infoToken), status = 201, mimetype = "application/json")
+		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
 	elif error == psycopg2.IntegrityError:
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-
-@app.route("/users/<id>", methods = ['PUT'])
-def updateUser(id):
-	user = UserFinder.Instance().findById(int(id))
-	if request.form.get('pic'):
-		pic = request.form['pic']
-		user.pic = pic
-		print 'pic si'
-	if request.form.get('password'):
-		password = request.form['password']
-		user.password = password
-		print 'si'
-	if request.form.get('verified'):
-		verified = request.form['verified']
-		user.verified = verified == 'True'
-	if request.form.get('banned'):
-		banned = request.form['banned']
-		user.banned = banned == 'True'
-	user.update()
-	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 
 @app.route("/users/<name>", methods = ['GET'])
 def getUser(name):
@@ -354,19 +264,8 @@ def getUser(name):
 		info = tupleToJson(row) #row es un gateway cualquiera
 		return Response(info, status=200, mimetype="application/json")
 	else:
-		return Response(msgNotFound, status=404,  mimetype="application/json")	
-
-#pending to document
-@app.route("/users/<id>/events", methods = ['GET'])
-def getUserEvents(id):
-	finder = EventFinder.Instance()
-	row = finder.findByUserId(id)
-	if (row):
-		info = tuplesToJson(row) #row es un gateway cualquiera
-		return Response(info, status=200, mimetype="application/json")
-	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")		
-
+#Pending
 @app.route("/users/<id>/follows", methods = ['GET'])
 def getUserFollows(id):
 	rows = FinderFollowing.Instance().find(id)
@@ -376,13 +275,9 @@ def getUserFollows(id):
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
-
+#Pending
 @app.route("/users/<id>/follows", methods = ['POST'])
 def postUserFollows(id):
-	token = request.headers['token']
-	id = verify_auth_token(token)
-	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
-	
 	followedId = request.form['followed']
 	newFollows = GatewayFollowing(id, followedId)
 	error = newFollows.insert()
@@ -392,26 +287,18 @@ def postUserFollows(id):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
-
+#Pending
 @app.route("/users/<id>/follows/<followed>", methods = ['DELETE'])
 def deleteUserFollows(id, followed):
-	token = request.headers['token']
-	id = verify_auth_token(token)
-	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
-
 	follows = GatewayFollowing(id, followed)
 	error = follows.remove()
 	if error == None:
 		return Response(msgDeletedOK, status = 201, mimetype = "application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-
+#Pending
 @app.route("/users/<id>/subscription/<followed>", methods = ['PUT'])
 def putUserSubscription(id, followed):
-	token = request.headers['token']
-	id = verify_auth_token(token)
-	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
-
 	subscribed = request.form['subscribed']
 	finder = FinderFollowing.Instance()
 	follows = finder.findSubscription(id,followed)
@@ -421,13 +308,10 @@ def putUserSubscription(id, followed):
 		return Response(msgUpdatedOK, status=200, mimetype="application/json")
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")
-
+#Pending
+#Algun error al hacer la query
 @app.route("/users/<id>/wallet", methods = ['PUT'])
 def putUserWallet(id):
-	token = request.headers['token']
-	id = verify_auth_token(token)
-	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
-	
 	cardNumber = request.form['card']
 	cvc = request.form['cvc']
 	money = request.form['money']
@@ -440,6 +324,20 @@ def putUserWallet(id):
 	user.updateWallet()
 	return Response(msgUpdatedOK, status=200, mimetype="application/json")
 	
+#Pending
+#se podria pasar el true/false por la url
+#algun error con la query
+@app.route("/users/<id>/verified", methods = ['PUT'])
+def putUserVerified(id):
+	isVerified = request.form['verified']
+	user = UserFinder.Instance().findById(id)
+	user.verified = isVerified
+	error = user.update()
+	if error == None:
+		return Response(msgUpdatedOK, status=200, mimetype="application/json")
+	else:
+		return Response(msgNotFound, status=404,  mimetype="application/json")
+
 
 @app.route("/users/<id>/categories", methods = ['PUT'])
 def setUserCategories(id):
@@ -453,12 +351,26 @@ def setUserCategories(id):
 	CategoriesGateway(int(id), l).update()
 	return Response(msgUpdatedOK,status=200, mimetype="application/json")
 	
+#Igual quitar el id de la respuesta? ya lo tienen a la hora de enviar
 @app.route("/users/<id>/categories", methods = ['GET'])
 def getUserCategories(id):
 	row = CategoriesFinder.Instance().findById(int(id))
 	result = tupleToJson(row)
 	return Response(result, status=200, mimetype="application/json")
-	
+
+#pending
+@app.route("/users/<id>/calendar", methods = ['POST'])
+def addEventToUserCalendar(id):
+	token = request.headers['token']
+	idCorresponiente = verify_auth_token(token)
+	miId = int(id)
+	if (miId != idCorresponiente): return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	row = CalendarGateway(miId,request.form['eventId'], request.form['fecha'])
+	error = row.insert()
+	if (error == None): return Response(msgCreatedOK,status=200,mimetype="application/json")
+	else: return Response(msgIntegrityError,status=400,mimetype="application/json")
+
 if __name__ == "__main__":
 	while True:
 		try:
