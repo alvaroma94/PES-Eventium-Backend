@@ -33,3 +33,7 @@ class EventGateway:
 		info = {"id" : self.id, "organizerId" : self.organizerId, "title" : self.title , "fecha_ini" : self.fechai, "fecha_fin" : self.fechaf, "hora_ini" : self.horai, "hora_fin" : self.horaf, "precio" : self.precio, "pic" : self.pic, "ciudad" : self.ciudad, "categoria": self.categoria, "destacado":self.destacado}
 		return info
 
+	def delete(self):
+		query = "DELETE FROM \"EVENT\" WHERE \"ID\" = %s"
+		values = (self.id,)
+		UtilsBD.Instance().executeRemove(query,values)

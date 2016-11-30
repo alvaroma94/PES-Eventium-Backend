@@ -22,6 +22,7 @@ from CategoriesFinder import CategoriesFinder
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
+from datetime import date
 
 #esto es para el token
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
@@ -54,6 +55,7 @@ msgUpdatedOK = json.dumps({'status': 'Updated'})
 msgTypeError = json.dumps({'status' : 'Type Error'})
 msgGoodMail= json.dumps({'status' : 'La password ha sido enviada a tu mail'})
 msgBadMail= json.dumps({'status' : 'El usuario o mail no existe'})
+msgForbiddenAction = json.dumps({'status' : 'Operacion no permitida'})
 
 categories = json.dumps({'0' : 'artistico', '1' : 'automobilistico', '2' : 'cinematografico', '3' : 'deportivo', '4' : 'gastronomico' , '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
 #si no existe la tabla la creo
@@ -144,6 +146,24 @@ def getRecommendedEvents():
 	categories = CategoriesFinder.Instance().findById(id).categories
 	events = EventFinder.Instance().findByCategories(categories)
 	return Response(tuplesToJson(events), status=200, mimetype="application/json")
+
+
+@app.route("/events/<id>", methods = ['DELETE'])
+def deleteEvent(id):
+	event = EventFinder.Instance().findById(int(id))
+	token = request.headers['token']
+	organizerId = verify_auth_token(token)
+	if not organizerId or event.organizerId != organizerId: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	fechaHoy =date.today()
+	fechaAux = event.fechai.split('-')
+	fechaEvento = date(int(fechaAux[0]), int(fechaAux[1]), int(fechaAux[2]))
+
+	if (fechaEvento > fechaHoy):
+		event.delete()
+		return Response(msgDeletedOK,status=200, mimetype="application/json")
+	else: return Response(msgForbiddenAction, status=403, mimetype="application/json")
+	#formato fecha YYYY-MM-DD
 
 @app.route("/events/<id>", methods = ['PUT'])
 def updateEvent(id):
