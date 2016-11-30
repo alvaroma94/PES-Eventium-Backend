@@ -102,6 +102,7 @@ def me():
 	msg = {'username':user.username}
 	return Response(json.dumps(msg), status=200,  mimetype="application/json")
 
+
 @app.route("/login", methods = ['POST'])
 def login():
 	username = request.form['username']
@@ -133,6 +134,16 @@ def sendMail():
 		return Response(msgGoodMail, status=200, mimetype="application/json")	
 	else:
 		return Response(msgBadMail, status=404,  mimetype="application/json")
+
+@app.route("/events/recommended", methods = ['GET'])
+def getRecommendedEvents():
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	categories = CategoriesFinder.Instance().findById(id).categories
+	events = EventFinder.Instance().findByCategories(categories)
+	return Response(tuplesToJson(events), status=200, mimetype="application/json")
 
 @app.route("/events/<id>", methods = ['PUT'])
 def updateEvent(id):
