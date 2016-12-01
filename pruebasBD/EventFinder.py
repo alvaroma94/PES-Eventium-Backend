@@ -87,11 +87,20 @@ class EventFinder:
 				query = query + " \"HORA_INI\" >= '%s' AND" % (hora_ini)
 
 		if categoria != None:
+			query = query  + " ( "
+			i = 0
+			while i < len(categoria):
+				if categoria[i] != "," and categoria[i] != '-': query = query + " \"CATEGORIA\" = '%s' " % (categoria[i])
+				elif categoria[i] == "," and categoria[i+1] != '-': query = query + " OR "
+				i += 1
+			
+			query = query  + " ) "
 			cont = cont - 1
-			if cont == 0:
-				query = query + " \"CATEGORIA\" >= '%s' " % (categoria)
-			elif cont > 0:
-				query = query + " \"CATEGORIA\" >= '%s' AND" % (categoria)
+			##print query
+			###if cont == 0:
+			##	query = query + " \"CATEGORIA\" = '%s' " % (categoria)
+			##elif cont > 0:
+			##	query = query + " \"CATEGORIA\" = '%s' AND" % (categoria)
 
 
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
