@@ -216,6 +216,13 @@ def updateEvent(id):
 		destacado = request.form['destacado']
 		event.destacado= destacado
 		print 'si destacado'
+	if request.form.get('descripcion'):
+		descripcion = request.form['descripcion']
+		event.descripcion = descripcion
+	if request.form.get('url'):
+		url = request.form['url']
+		event.url = url
+		
 	event.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 	
@@ -234,10 +241,17 @@ def postEvent():
 	ciudad = request.form['ciudad']
 	categoria = request.form['categoria']
 	destacado = False
+	descripcion = None
+	url = None
+
 	if request.form.get('destacado'):
 		destacado = request.form['destacado'] == 'True' 
+	if request.form.get('descripcion'):
+		descripcion = request.form['descripcion']
+	if request.form.get('url'):
+		url = request.form['url']
 
-	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria, destacado)
+	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria, destacado, descripcion, url)
 	error = newEvent.insert()
 	if error == None:
 		return Response(msgCreatedOK, status = 201, mimetype = "application/json")
