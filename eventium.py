@@ -165,6 +165,7 @@ def deleteEvent(id):
 	else: return Response(msgForbiddenAction, status=403, mimetype="application/json")
 	#formato fecha YYYY-MM-DD
 
+#pending 2 campos +
 @app.route("/events/<id>", methods = ['PUT'])
 def updateEvent(id):
 	token = request.headers['token']
@@ -222,10 +223,11 @@ def updateEvent(id):
 	if request.form.get('url'):
 		url = request.form['url']
 		event.url = url
-		
+
 	event.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
-	
+
+#pending 2 campos +
 @app.route("/events", methods = ['POST'])
 def postEvent():
 	token = request.headers['token']
@@ -310,6 +312,7 @@ def postEventValoration(eventid):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+#pending 2 campos mas
 @app.route("/events", methods = ['GET'])
 def getEvents():
 
