@@ -36,7 +36,7 @@ CREATE TABLE "EVENT" (
 	"PRECIO"   float ,
 	"PIC"	   text,
 	"CIUDAD"   varchar(255),
-	"CATEGORIA" int REFERENCES "CATEGORY"("ID"),
+	"CATEGORIA" int,
 	"DESTACADO" boolean
 
 );

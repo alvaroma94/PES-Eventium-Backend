@@ -234,7 +234,7 @@ def postEvent():
 	ciudad = request.form['ciudad']
 	categoria = request.form['categoria']
 	destacado = False
-	if request.form['destacado']:
+	if request.form.get('destacado'):
 		destacado = request.form['destacado'] == 'True' 
 
 	newEvent = EventGateway("", organizerId, title, horaf, horai , fechaf, fechai, precio, pic, ciudad, categoria, destacado)
