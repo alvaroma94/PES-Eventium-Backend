@@ -499,7 +499,7 @@ def addEventToUserCalendar(id):
 	miId = int(id)
 	if (miId != idCorresponiente): return Response(msgNoPermission, status=401,  mimetype="application/json")
 
-	row = CalendarGateway(miId,request.form['eventId'], request.form['fecha'])
+	row = CalendarGateway(miId,request.form['eventId'])
 	error = row.insert()
 	if (error == None): return Response(msgCreatedOK,status=200,mimetype="application/json")
 	else: return Response(msgIntegrityError,status=400,mimetype="application/json")

@@ -6,14 +6,14 @@ from utilsBD import UtilsBD
 #patron row data gateway (cada instancia de la clase es una fila de la bd)
 class CalendarGateway:
 
-	def __init__(self, userid, eventid, fecha):
+	def __init__(self, userid, eventid):
 		self.userid = userid
 		self.eventid = eventid
-		self.fecha = fecha
+
 
 	def insert(self):
-		query = "INSERT INTO \"CALENDAR\"   (\"USERID\" , \"EVENTID\" , \"FECHA\") VALUES (%s, %s, %s)"
-		values = (self.userid, self.eventid, self.fecha)
+		query = "INSERT INTO \"CALENDAR\"   (\"USERID\" , \"EVENTID\" ) VALUES (%s, %s)"
+		values = (self.userid, self.eventid)
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def delete(self):
@@ -22,5 +22,5 @@ class CalendarGateway:
 		UtilsBD.Instance().executeRemove(query,values)
 
 	def toTuple(self):
-		info = {"userid": self.userid, "eventid" : self.eventid, "fecha" : self.fecha}
+		info = {"userid": self.userid, "eventid" : self.eventid}
 		return info
