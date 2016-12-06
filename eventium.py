@@ -267,6 +267,15 @@ def postEvent():
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
+@app.route("/events/<eventid>/report", methods = ['PUT'])
+def reportEvent(eventid):
+	finder = EventFinder.Instance()
+	event = finder.findById(eventid)
+	event.nreports = event.nreports + 1
+	event.update()
+	if(event.nreports == 5): event.delete()
+	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
+
 @app.route("/events/destacados", methods = ['GET'])
 def getEventsDestacados():
 	rows = EventFinder.Instance().getAllDestacados()
