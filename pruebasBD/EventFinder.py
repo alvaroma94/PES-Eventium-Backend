@@ -5,6 +5,15 @@ from connection import Connection
 from utilsBD import UtilsBD
 import json
 
+def getValoration(id):
+	query = "SELECT AVG(\"POINTS\") FROM \"COMMENT\" c, \"EVENT\" e WHERE c.\"EVENTID\" = e.\"ID\" and e.\"ID\" = %s"
+	values = (id,)
+	average = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
+	if (average[0] != None):
+		 return average[0]
+	else:
+		 return ""
+
 #patron finder de Row Data Gateway
 @SingletonPattern.Singleton
 class EventFinder:
@@ -106,7 +115,8 @@ class EventFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12], url = t[13], nreports = t[14])
+			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12], 
+			url = t[13], nreports = t[14])
 			ret.append(test)
 		return ret
 
@@ -126,7 +136,8 @@ class EventFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12], url = t[13], nreports = t[14])
+			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12],
+			url = t[13], nreports = t[14], valoration = getValoration(t[0]))
 			return test
 		return ret
 
@@ -135,7 +146,8 @@ class EventFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12], url = t[13], nreports = t[14])
+			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12],
+			url = t[13], nreports = t[14], valoration = getValoration(t[0]))
 			ret.append(test)
 		return ret
 
@@ -145,7 +157,8 @@ class EventFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12], url = t[13], nreports = t[14])
+			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12],
+			url = t[13], nreports = t[14], valoration = getValoration(t[0]))
 			ret.append(test)
 		return ret
 
@@ -157,6 +170,7 @@ class EventFinder:
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12], url = t[13], nreports = t[14])
+			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12],
+			url = t[13], nreports = t[14], valoration = getValoration(t[0]))
 			ret.append(test)
 		return ret
