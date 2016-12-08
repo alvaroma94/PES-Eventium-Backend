@@ -40,7 +40,8 @@ CREATE TABLE "EVENT" (
 	"DESTACADO" boolean,
 	"DESCRIPCION" varchar(1024),
 	"URL" varchar(255),
-	"NREPORTS" int
+	"NREPORTS" int,
+	"DIRECCION" varchar(255)
 
 );
 
