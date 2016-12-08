@@ -19,6 +19,7 @@ from gatewayFollowing import GatewayFollowing
 from finderFollowing import FinderFollowing
 from CategoriesGateway import CategoriesGateway
 from CategoriesFinder import CategoriesFinder
+from SponsoredGateway import SponsoredGateway
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -32,6 +33,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSign
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'holaquetal'
 mail = Mail(app)
+'''
 app.config.update(
 	DEBUG=True,
 	#EMAIL SETTINGS
@@ -41,6 +43,17 @@ app.config.update(
 	MAIL_USERNAME = 'eventiumbcn@gmail.com',
 	MAIL_PASSWORD = 'eventium321'
 	)
+'''
+app.config.update(
+	DEBUG=True,
+	#EMAIL SETTINGS
+	MAIL_SERVER='smtp.gmail.com',
+	MAIL_PORT=465,
+	MAIL_USE_SSL=True,
+	MAIL_USERNAME = 'eventium666@gmail.com',
+	MAIL_PASSWORD = '666eventiu'
+	)
+
 mail = Mail(app)
 
 connection = Connection.Instance()
@@ -56,6 +69,7 @@ msgTypeError = json.dumps({'status' : 'Type Error'})
 msgGoodMail= json.dumps({'status' : 'La password ha sido enviada a tu mail'})
 msgBadMail= json.dumps({'status' : 'El usuario o mail no existe'})
 msgForbiddenAction = json.dumps({'status' : 'Operacion no permitida'})
+msgEmailSent = json.dumps({'status' : 'Mail enviado'})
 
 categories = json.dumps({'0' : 'artistico', '1' : 'automobilistico', '2' : 'cinematografico', '3' : 'deportivo', '4' : 'gastronomico' , '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
 #si no existe la tabla la creo
@@ -71,9 +85,27 @@ except psycopg2.ProgrammingError as err:
 
 # https://blog.miguelgrinberg.com/post/restful-authentication-with-flask
 def generate_auth_token(mid):
-    s = Serializer(app.config['SECRET_KEY'])
-    token = s.dumps({'id': mid})
-    return token
+	s = Serializer(app.config['SECRET_KEY'])
+	token = s.dumps({'id': mid})
+	return token
+def generate_sponsor_token(mid,eventid):
+	s = Serializer(app.config['SECRET_KEY'])
+	token = s.dumps({'id': mid, 'eventid':eventid})
+	return token
+
+def verify_sponsor_token(token):
+	s = Serializer(app.config['SECRET_KEY'])
+	try:
+		data = s.loads(token)
+	except SignatureExpired:
+		print 'signature expired'
+		return False # valid token, but expired
+	except BadSignature:
+		print 'bad signature'
+		return False # invalid token
+	id = data['id']
+	eventid = data['eventid']
+	return (id, eventid)
 
 def verify_auth_token(token):
     s = Serializer(app.config['SECRET_KEY'])
@@ -118,6 +150,42 @@ def login():
 		print 'info token', infoToken
 		return Response(json.dumps(infoToken), status=200,  mimetype="application/json")
 	return Response(msgNotFound, status=404,  mimetype="application/json")
+
+@app.route("/sponsors", methods = ['GET'])
+def getSponsors():
+	rows = UserFinder.Instance().findSponsors()
+	if (rows): return Response(tuplesToJson(rows), status=200, mimetype="application/json")
+
+@app.route("/sponsorize", methods = ['GET'])
+def sponsorize():
+	token = request.args.get('token')
+	sponsorId, eventId = verify_sponsor_token(token)
+	print 'nueva peticion sponsor: ', sponsorId, ' -> evento: ', eventId
+	sponsorExists = UserFinder.Instance().findById(sponsorId) != None
+	eventExists = EventFinder.Instance().findById(eventId) != None
+	if (sponsorExists and eventExists):
+		SponsoredGateway(sponsorId, eventId).insert()
+		return Response(msgCreatedOK, status=200,  mimetype="application/json")
+	else: return Response(msgNoPermission, status=401, mimetype="application/json")
+
+@app.route("/sponsors/<id>/ask", methods = ['POST'])
+def askSponsor(id):
+	eventId = request.form['eventid']
+	token = request.headers['token']
+	organizerId = verify_auth_token(token)
+	event = EventFinder.Instance().findById(eventId);
+	if not organizerId or event.organizerId != organizerId: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	#usuario existe y ademas ha organizado el evento
+	sponsor = UserFinder.Instance().findById(int(id))
+	organizer = UserFinder.Instance().findById(organizerId)
+
+	url = request.url_root + "sponsorize?token=" + generate_sponsor_token(int(id),eventId)
+	msg = Message("Eventium", sender="admin@eventium.com", recipients=[sponsor.mail])
+	msg.body = "Hola " + sponsor.username + " has recibido una propuesta de " + organizer.username + " con correo " + organizer.mail;
+	msg.body += " para patrocinar el evento " + event.title + " ." + "Haz clic en el siguente enlace para confirmar: " + url
+	mail.send(msg)
+	return Response(msgEmailSent, status = 200,mimetype="application/json")
 
 
 @app.route("/mail", methods = ['GET'])

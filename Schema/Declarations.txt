@@ -8,7 +8,9 @@
 	"PIC" text,
 	"VERIFIED" boolean,
 	"BANNED" boolean DEFAULT FALSE,
-	"SPONSOR" boolean DEFAULT FALSE
+	"SPONSOR" boolean DEFAULT FALSE,
+	CHECK ("VERIFIED" OR NOT "SPONSOR")
+
 );
 
 

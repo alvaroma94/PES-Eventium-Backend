@@ -21,7 +21,7 @@ class UserFinder:
 		pass
 
 	def findForDeposit(self, id):
-		query = "SELECT \"SALDO\" FROM \"USER\" WHERE \"ID\" = %s"
+		query = "SELECT \"SALDO\" FROM \"USER\" WHERE \"ID\" = %s AND \"SPONSOR\" = false "
 		values = (id,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
@@ -31,7 +31,7 @@ class UserFinder:
 		return t
 
 	def findByName(self, username):
-		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s"
+		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s  AND \"SPONSOR\" = false"
 		values = (username,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
@@ -40,7 +40,7 @@ class UserFinder:
 		return t
 
 	def getAll(self):
-		query = "SELECT * FROM \"USER\""
+		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = false"
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
@@ -50,7 +50,7 @@ class UserFinder:
 
 	def findByMailOrUser(self, clave):
 
-		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s or  \"MAIL\" = %s"
+		query = "SELECT * FROM \"USER\" WHERE  \"SPONSOR\" = false AND (\"USERNAME\" = %s or  \"MAIL\" = %s)"
 		values = (clave, clave)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
@@ -75,3 +75,12 @@ class UserFinder:
 			user = UserGateway(id = t[0], username = t[1], password =t[2], mail = t[3], pic = t[6], verified = t[7], valoration = getValoration(t[0]))
 			return user
 		return t
+
+	def findSponsors(self):
+		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = true"
+		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
+		ret = []
+		for t in tuples:
+			test = UserGateway(id = t[0], username = t[1], mail = t[3], pic = t[6],)
+			ret.append(test)
+		return ret
