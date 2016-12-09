@@ -9,6 +9,7 @@
 	"VERIFIED" boolean,
 	"BANNED" boolean DEFAULT FALSE,
 	"SPONSOR" boolean DEFAULT FALSE,
+	"CIUDAD" varchar(255),
 	CHECK ("VERIFIED" OR NOT "SPONSOR")
 
 );
