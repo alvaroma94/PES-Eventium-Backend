@@ -454,8 +454,11 @@ def postUser():
 	password = request.form['password']
 	mail = request.form['mail']
 	pic = request.form['pic']
+	ciudad = None
+	if (request.form.get('ciudad')):
+		ciudad = request.form['ciudad']
 	#saldo = request.form['saldo']
-	newUser = UserGateway(None, username, password, mail, pic)
+	newUser = UserGateway(None, username, password, mail, pic, ciudad=ciudad)
 	error = newUser.insert()
 	if error == None:
 		mid = UserFinder.Instance().findForLogin(username,password).id
@@ -483,6 +486,8 @@ def updateUser(id):
 	if request.form.get('banned'):
 		banned = request.form['banned']
 		user.banned = banned == 'True'
+	if (request.form.get('ciudad')):
+		user.ciudad = request.form['ciudad']
 	user.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 
