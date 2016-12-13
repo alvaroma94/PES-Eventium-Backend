@@ -127,7 +127,6 @@ def verify_auth_token(token):
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
 
-#pending to document now returns name too
 @app.route("/me", methods = ['GET'])
 def me():
 	id = verify_auth_token(request.headers['token'])
@@ -233,7 +232,6 @@ def deleteEvent(id):
 	else: return Response(msgForbiddenAction, status=403, mimetype="application/json")
 	#formato fecha YYYY-MM-DD
 
-#pending 2 campos +
 @app.route("/events/<id>", methods = ['PUT'])
 def updateEvent(id):
 	token = request.headers['token']
@@ -300,7 +298,6 @@ def updateEvent(id):
 	event.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 
-#pending 2 campos +
 @app.route("/events", methods = ['POST'])
 def postEvent():
 	token = request.headers['token']
@@ -385,6 +382,7 @@ def postEventComment(eventid):
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
 #pending to update
+#no se que hay que updatear?
 @app.route("/events/<eventid>/valoration", methods = ['POST'])
 def postEventValoration(eventid):
 	token = request.headers['token']
@@ -402,7 +400,6 @@ def postEventValoration(eventid):
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
 
-#pending 2 campos mas
 @app.route("/events", methods = ['GET'])
 def getEvents():
 
@@ -435,7 +432,6 @@ def getEvent(id):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")	
 
-#queda quitar pssword
 @app.route("/users", methods = ['GET'])
 def getUsers():
 	finder = UserFinder.Instance()
@@ -447,15 +443,18 @@ def getUsers():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
-#Update object user (Add valoration)
+
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
 	password = request.form['password']
 	mail = request.form['mail']
 	pic = request.form['pic']
+	ciudad = None
+	if (request.form.get('ciudad')):
+		ciudad = request.form['ciudad']
 	#saldo = request.form['saldo']
-	newUser = UserGateway(None, username, password, mail, pic)
+	newUser = UserGateway(None, username, password, mail, pic, ciudad=ciudad)
 	error = newUser.insert()
 	if error == None:
 		mid = UserFinder.Instance().findForLogin(username,password).id
@@ -483,6 +482,8 @@ def updateUser(id):
 	if request.form.get('banned'):
 		banned = request.form['banned']
 		user.banned = banned == 'True'
+	if (request.form.get('ciudad')):
+		user.ciudad = request.form['ciudad']
 	user.update()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
 
@@ -496,7 +497,6 @@ def getUser(name):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")	
 
-#pending to document
 @app.route("/users/<id>/events", methods = ['GET'])
 def getUserEvents(id):
 	finder = EventFinder.Instance()

@@ -5,7 +5,7 @@ from utilsBD import UtilsBD
 
 #patron row data gateway (cada instancia de la clase es una fila de la bd)
 class UserGateway:
-	def __init__(self, id, username = "", password = "", mail = "", pic = "" , wallet = 0 , verified = False,  banned = False, valoration= ""):
+	def __init__(self, id, username = "", password = "", mail = "", pic = "" , wallet = 0 , verified = False,  banned = False, ciudad = "", valoration= ""):
 		#variables privadas de la clase
 		self.id = id
 		self.username = username
@@ -16,6 +16,7 @@ class UserGateway:
 		self.verified = verified
 		self.banned = banned
 		self.valoration = valoration
+		self.ciudad = ciudad
 	def getPassword(self):    
 		return self.password
 	def getMail(self):
@@ -24,13 +25,13 @@ class UserGateway:
 		return self.username
 
 	def insert(self):
-		query = "INSERT INTO \"USER\"   (\"USERNAME\" , \"PASSWORD\" , \"MAIL\", \"PIC\", \"VERIFIED\", \"SALDO\" ) VALUES (%s, %s, %s, %s, %s, %s)"
-		values = (self.username, self.password, self.mail, self.pic, self.verified, self.wallet)
+		query = "INSERT INTO \"USER\"   (\"USERNAME\" , \"PASSWORD\" , \"MAIL\", \"PIC\", \"VERIFIED\", \"SALDO\", \"CIUDAD\" ) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+		values = (self.username, self.password, self.mail, self.pic, self.verified, self.wallet, self.ciudad)
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def update(self):
-		query = "UPDATE \"USER\"  SET \"VERIFIED\" = %s, \"PASSWORD\" = %s, \"PIC\" = %s, \"BANNED\" = %s WHERE \"ID\" = %s"
-		values = (self.verified, self.password, self.pic, self.banned, self.id)
+		query = "UPDATE \"USER\"  SET \"VERIFIED\" = %s, \"PASSWORD\" = %s, \"PIC\" = %s, \"BANNED\" = %s , \"CIUDAD\" = %s WHERE \"ID\" = %s"
+		values = (self.verified, self.password, self.pic, self.banned, self.ciudad, self.id)
 		return UtilsBD.Instance().executeUpdate(query,values)
 					
 	def updateWallet(self):
@@ -39,7 +40,7 @@ class UserGateway:
 		return UtilsBD.Instance().executeInsert(query,values)
 
 	def toTuple(self):
-		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "saldo" : self.wallet, "verified":self.verified, "banned":self.banned, "valoration":str(self.valoration)}
+		info = {"id" : self.id, "username" : self.username, "password" : self.password, "mail" : self.mail, "pic":self.pic, "saldo" : self.wallet, "verified":self.verified, "banned":self.banned, "valoration":str(self.valoration), "ciudad":self.ciudad}
 		return info
 
 	def toWallet(self):
