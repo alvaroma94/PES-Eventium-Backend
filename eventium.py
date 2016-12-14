@@ -598,7 +598,7 @@ def getUserCategories(id):
 	row = CategoriesFinder.Instance().findById(int(id))
 	result = tupleToJson(row)
 	return Response(result, status=200, mimetype="application/json")
-#pending
+
 @app.route("/users/<id>/calendar", methods = ['POST'])
 def addEventToUserCalendar(id):
 	token = request.headers['token']
@@ -611,7 +611,6 @@ def addEventToUserCalendar(id):
 	if (error == None): return Response(msgCreatedOK,status=200,mimetype="application/json")
 	else: return Response(msgIntegrityError,status=400,mimetype="application/json")
 
-#pending
 @app.route("/users/<id>/calendar", methods = ['GET'])
 def getEventsFromUserCalendar(id):
 	token = request.headers['token']
@@ -622,7 +621,6 @@ def getEventsFromUserCalendar(id):
 	info = tuplesToJson(rows)
 	return Response(info,status=200,mimetype="application/json")
 
-#pending
 @app.route("/users/<id>/calendar/<eventid>", methods = ['DELETE'])
 def deleteEventsFromUserCalendar(id, eventid):
 	token = request.headers['token']

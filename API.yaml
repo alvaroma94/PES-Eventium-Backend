@@ -121,9 +121,29 @@ paths:
           type: string
         - name: destacado
           in: formData
+          description: Whether this event was promoted or not
           required: False
           type: boolean
-          description: True or False (first letter capitalized)
+        - name: descripcion
+          in: formData
+          description: Event description
+          required: False
+          type: string
+        - name: url
+          in: formData
+          description: Event url
+          required: False
+          type: string
+        - name: nreports
+          in: formData
+          description: Event report number
+          required: False
+          type: string
+        - name: direccion
+          in: formData
+          description: Event address
+          required: False
+          type: string
         responses:
           201:
             description: Event created correctly
@@ -198,6 +218,21 @@ paths:
           required: False
           type: boolean
           description: True or False (first letter capitalized)
+        - name: descripcion
+          in: formData
+          required: False
+          type: string
+          description: Description of the event
+        - name: url
+          in: formData
+          required: False
+          type: string
+          description: Url of the event  
+        - name: direccion
+          in: formData
+          required: False
+          type: boolean
+          description: Address of the event
         responses:
           200:
             description: Events retrieved correctly
@@ -615,7 +650,7 @@ paths:
           500:
             description: Internal server error
   /users/{id}/verified:
-    get:
+     get:
         deprecated: true
         summary: Update the verified status of the user
         tags:
@@ -690,6 +725,129 @@ paths:
                 $ref: '#/definitions/Response'
           500:
             description: Internal server error           
+  /users/{id}/events:
+    get:
+        summary: Get the events created by this user
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing the events
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/Category'
+          404:
+            description: No users found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error    
+  /users/{id}/calendar:
+    get:
+      summary: Get the events created by this user
+      tags:
+        - Users
+        - Events
+      parameters:
+      - name: id
+        in: path
+        description: User id
+        required: True
+        type: string
+      - name: token
+        in: header
+        required: True
+        type: string
+      responses:
+        200:
+          description: Calendar retrieved correctly
+          schema:
+            type: array
+            items:
+                $ref: '#/definitions/Calendar'
+        400:
+          description: Bad request
+          schema:
+              $ref: '#/definitions/Response'
+        401:
+          description: Permission denied
+          schema:
+              $ref: '#/definitions/Response'
+        500:
+          description: Internal server error 
+    post:
+        summary: Add an event to the the user calendar
+        tags:
+          - Users
+          - Events
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: token
+          in: header
+          required: True
+          type: string
+        - name: eventId
+          in: formData
+          required: True
+          type: string
+        responses:
+          200:
+            description: post done correctly
+            schema:
+                  $ref: '#/definitions/Category'
+          400:
+            description: Bad request
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error      
+  /users/{id}/calendar/{eventId}:
+    delete:
+      summary: Get the events created by this user
+      tags:
+        - Users
+        - Events
+      parameters:
+      - name: id
+        in: path
+        description: User id
+        required: True
+        type: string
+      - name: eventId
+        in: path
+        description: Event id
+        required: True
+        type: string
+      - name: token
+        in: header
+        required: True
+        type: string
+      responses:
+        200:
+          description: Correctly deleted
+          schema:
+              $ref: '#/definitions/Response'
+        401:
+          description: Permission denied
+          schema:
+              $ref: '#/definitions/Response'
+        500:
+          description: Internal server error 
   /me:
     get:
         summary: The current user logged in identified by the token sent
@@ -705,7 +863,7 @@ paths:
           200:
             description: The id of the user
             schema:
-                $ref: '#/definitions/Id'
+                $ref: '#/definitions/Name'
           401:
             description: Permission denied
             schema:
@@ -779,12 +937,21 @@ paths:
           description: Internal server error
           
 definitions:
-  Id:
+  Name:
+    type: object
+    properties:
+      name:
+        type: string
+        description: name of the user
+  Calendar:
     type: object
     properties:
       id:
         type: integer
         description: id of the user
+      eventid:
+        type: integer
+        description: id of the event
   Token:
     type: object
     properties:
@@ -812,8 +979,6 @@ definitions:
       username:
         type: string
         description: Unique user name
-      password:
-        type: string
       mail:
         type: string
         description: Unique user email
@@ -825,6 +990,9 @@ definitions:
       verified:
         type: boolean
         description: will return true or false (first letter not capitalized)
+      valoration:
+        type: integer
+        description: Valoration of this
   Event:
     type: object
     properties:
@@ -857,6 +1025,17 @@ definitions:
       destacado:
         type: boolean
         description: true or false (first letter not capitalized)
+      descripcion:
+        type: string
+      url:
+        type: string
+      nreports:
+        type: string
+        description: number of event reports
+      valoration:
+        type: string
+      direccion:
+        type: string  
   Comment:
     type: object
     properties:
