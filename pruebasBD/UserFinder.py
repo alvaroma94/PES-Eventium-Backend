@@ -72,7 +72,8 @@ class UserFinder:
 		values = (id,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
-			user = UserGateway(id = t[0], username = t[1], password =t[2], mail = t[3], pic = t[6], verified = t[7], valoration = getValoration(t[0]), ciudad = t[10])
+			print 'sponsor', t[9]
+			user = UserGateway(id = t[0], username = t[1], password =t[2], mail = t[3], pic = t[6], verified = t[7], valoration = getValoration(t[0]), ciudad = t[10], sponsor = t[9])
 			return user
 		return t
 

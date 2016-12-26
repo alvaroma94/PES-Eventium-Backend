@@ -20,6 +20,7 @@ from finderFollowing import FinderFollowing
 from CategoriesGateway import CategoriesGateway
 from CategoriesFinder import CategoriesFinder
 from SponsoredGateway import SponsoredGateway
+from SponsoredFinder import SponsoredFinder
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
@@ -132,7 +133,7 @@ def me():
 	id = verify_auth_token(request.headers['token'])
 	if (not id): return Response(msgNotFound, status=404,  mimetype="application/json")
 	user = UserFinder.Instance().findById(int(id))
-	msg = {'username':user.username}
+	msg = {'username':user.username, 'sponsor':user.sponsor}
 	return Response(json.dumps(msg), status=200,  mimetype="application/json")
 
 
@@ -167,25 +168,6 @@ def sponsorize():
 		return Response(msgCreatedOK, status=200,  mimetype="application/json")
 	else: return Response(msgNoPermission, status=401, mimetype="application/json")
 
-@app.route("/sponsors/<id>/ask", methods = ['POST'])
-def askSponsor(id):
-	eventId = request.form['eventid']
-	token = request.headers['token']
-	organizerId = verify_auth_token(token)
-	event = EventFinder.Instance().findById(eventId);
-	if not organizerId or event.organizerId != organizerId: return Response(msgNoPermission, status=401,  mimetype="application/json")
-
-	#usuario existe y ademas ha organizado el evento
-	sponsor = UserFinder.Instance().findById(int(id))
-	organizer = UserFinder.Instance().findById(organizerId)
-
-	url = request.url_root + "sponsorize?token=" + generate_sponsor_token(int(id),eventId)
-	msg = Message("Eventium", sender="admin@eventium.com", recipients=[sponsor.mail])
-	msg.body = "Hola " + sponsor.username + " has recibido una propuesta de " + organizer.username + " con correo " + organizer.mail;
-	msg.body += " para patrocinar el evento " + event.title + " ." + "Haz clic en el siguente enlace para confirmar: " + url
-	mail.send(msg)
-	return Response(msgEmailSent, status = 200,mimetype="application/json")
-
 
 @app.route("/mail", methods = ['GET'])
 def sendMail():
@@ -203,6 +185,27 @@ def sendMail():
 		return Response(msgGoodMail, status=200, mimetype="application/json")	
 	else:
 		return Response(msgBadMail, status=404,  mimetype="application/json")
+
+# token es el del sponsor
+@app.route("/events/<id>/sponsorize", methods = ['POST'])
+def sponsorizeEvent(id):
+	eventId = int(id)
+	token = request.headers['token']
+	sponsorId = verify_auth_token(token)
+
+	if not sponsorId or SponsoredFinder.Instance().checkIsSponsoring(sponsorId,eventId): return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	event = EventFinder.Instance().findById(eventId);
+	sponsor = UserFinder.Instance().findById(sponsorId)
+	organizer = UserFinder.Instance().findById(event.organizerId)
+
+	url = request.url_root + "sponsorize?token=" + generate_sponsor_token(int(sponsorId),eventId)
+	msg = Message("Eventium", sender="admin@eventium.com", recipients=[sponsor.mail])
+	msg.body = "Hola " + organizer.username + " has recibido una propuesta de " + sponsor.username + " con correo " + sponsor.mail;
+	msg.body += " para patrocinar tu evento " + event.title + " ." + "Haz clic en el siguente enlace para confirmar: " + url
+	mail.send(msg)
+	return Response(msgEmailSent, status = 200,mimetype="application/json")
+
 
 @app.route("/events/recommended", methods = ['GET'])
 def getRecommendedEvents():
