@@ -226,7 +226,7 @@ def deleteEvent(id):
 	if not organizerId or event.organizerId != organizerId: return Response(msgNoPermission, status=401,  mimetype="application/json")
 
 	fechaHoy =date.today()
-	fechaAux = event.fechai.split('-')
+	fechaAux = event.fechai.split('/')
 	fechaEvento = date(int(fechaAux[0]), int(fechaAux[1]), int(fechaAux[2]))
 
 	if (fechaEvento > fechaHoy):
