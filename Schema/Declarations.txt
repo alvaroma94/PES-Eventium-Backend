@@ -10,6 +10,7 @@
 	"BANNED" boolean DEFAULT FALSE,
 	"SPONSOR" boolean DEFAULT FALSE,
 	"CIUDAD" varchar(255),
+	"NREPORTS" int,
 	CHECK ("VERIFIED" OR NOT "SPONSOR")
 
 );

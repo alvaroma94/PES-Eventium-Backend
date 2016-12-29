@@ -71,6 +71,7 @@ msgGoodMail= json.dumps({'status' : 'La password ha sido enviada a tu mail'})
 msgBadMail= json.dumps({'status' : 'El usuario o mail no existe'})
 msgForbiddenAction = json.dumps({'status' : 'Operacion no permitida'})
 msgEmailSent = json.dumps({'status' : 'Mail enviado'})
+msgBanned = json.dumps({'status' : 'User banned'})
 
 categories = json.dumps({'0' : 'artistico', '1' : 'automobilistico', '2' : 'cinematografico', '3' : 'deportivo', '4' : 'gastronomico' , '5': 'literario', '6':'moda', '7':'musical', '8':'otros', '9': 'politico', '10':'teatral', '11':'tecnologico_y_cientifico'})
 #si no existe la tabla la creo
@@ -143,6 +144,7 @@ def login():
 	password = request.form['password']
 	finder = UserFinder.Instance()
 	row = finder.findForLogin(username,password)
+	if(row.banned == True): return Response(msgBanned, status=401,  mimetype="application/json")
 	if (row):
 		mid = row.id
 		print 'la id es ', mid
@@ -345,12 +347,33 @@ def postEvent():
 
 @app.route("/events/<eventid>/report", methods = ['PUT'])
 def reportEvent(eventid):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
 	finder = EventFinder.Instance()
 	event = finder.findById(eventid)
 	event.nreports = event.nreports + 1
 	event.update()
 	if(event.nreports == 5): event.delete()
 	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
+
+@app.route("/users/<userid>/report", methods = ['PUT'])
+def reportUser(userid):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	finder = UserFinder.Instance()
+	user = finder.findById(userid)
+	user.nreports = user.nreports + 1
+	user.updateReports()
+	if(user.nreports == 5): 
+		user.banned = True
+		user.updateBanned()
+	return Response(msgUpdatedOK, status = 200, mimetype="application/json")
+
+
 
 @app.route("/events/destacados", methods = ['GET'])
 def getEventsDestacados():
@@ -454,10 +477,11 @@ def postUser():
 	mail = request.form['mail']
 	pic = request.form['pic']
 	ciudad = None
+	nreports = 0
 	if (request.form.get('ciudad')):
 		ciudad = request.form['ciudad']
 	#saldo = request.form['saldo']
-	newUser = UserGateway(None, username, password, mail, pic, ciudad=ciudad)
+	newUser = UserGateway(None, username, password, mail, pic, ciudad=ciudad, nreports=nreports)
 	error = newUser.insert()
 	if error == None:
 		mid = UserFinder.Instance().findForLogin(username,password).id
