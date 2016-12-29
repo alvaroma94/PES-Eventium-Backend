@@ -24,6 +24,7 @@ from SponsoredFinder import SponsoredFinder
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 import psycopg2
 import json
+import numbers
 from datetime import date
 
 #esto es para el token
@@ -477,7 +478,7 @@ def getUsers():
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
-
+'''
 @app.route("/users/<id>", methods = ['GET'])
 def getUsersById(id):
 	finder = UserFinder.Instance()
@@ -488,7 +489,7 @@ def getUsersById(id):
 	else:
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
-
+'''
 @app.route("/users", methods = ['POST'])
 def postUser():
 	username = request.form['username']
@@ -536,7 +537,13 @@ def updateUser(id):
 @app.route("/users/<name>", methods = ['GET'])
 def getUser(name):
 	finder = UserFinder.Instance()
-	row = finder.findByName(name)
+	aux = False
+	try:
+		if isinstance(int(name),int): aux = True
+	except Exception:
+		pass
+	if(aux == True): row = finder.findById(int(name))
+	else : row = finder.findByName(name)
 	if (row):
 		info = tupleToJson(row) #row es un gateway cualquiera
 		return Response(info, status=200, mimetype="application/json")
