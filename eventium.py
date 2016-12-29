@@ -208,6 +208,9 @@ def sponsorizeEvent(id):
 	mail.send(msg)
 	return Response(msgEmailSent, status = 200,mimetype="application/json")
 
+@app.route("/events/<id>/sponsors", methods = ['GET'])
+def getSponsorsByEvent(id):
+	return Response(tuplesToJson(SponsoredFinder.Instance().getSponsorsByEvent(int(id))), status=200, mimetype="application/json")
 
 @app.route("/events/recommended", methods = ['GET'])
 def getRecommendedEvents():

@@ -11,3 +11,5 @@ class SponsoredGateway:
 		query = "INSERT INTO \"SPONSORED\" (\"USERID\",\"EVENTID\") VALUES (%s,%s)"
 		values = (self.sponsorid, self.eventid)
 		return UtilsBD.Instance().executeInsert(query,values)
+	def toTuple(self):
+		return {'userid':self.sponsorid,'eventid':self.eventid}
