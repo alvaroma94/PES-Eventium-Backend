@@ -217,7 +217,13 @@ def getRecommendedEvents():
 	events = EventFinder.Instance().findByCategories(categories)
 	return Response(tuplesToJson(events), status=200, mimetype="application/json")
 
+@app.route("/events/<id>/attendees", methods = ['GET'])
+def getAttendees(id):
+	rows = CalendarFinder.Instance().getAllByEvent(int(id))
+	info = tuplesToJson(rows)
+	return Response(info,status=200,mimetype="application/json")
 
+	
 @app.route("/events/<id>", methods = ['DELETE'])
 def deleteEvent(id):
 	event = EventFinder.Instance().findById(int(id))

@@ -23,3 +23,12 @@ class CalendarFinder:
 		values = (id,eventid)
 		row = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		return CalendarGateway(id, row[1])
+
+	def getAllByEvent(self, id):
+		query = "SELECT \"USERID\" FROM \"CALENDAR\" WHERE \"EVENTID\" = %s"
+		values = (id,)
+		rows = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
+		ret = []
+		for row in rows:
+			ret.append(CalendarGateway(row[0], id))
+		return ret
