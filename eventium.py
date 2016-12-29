@@ -478,6 +478,16 @@ def getUsers():
 		resp = Response(msgNotFound, status=404,  mimetype="application/json")
 	return resp
 
+@app.route("/users/<id>", methods = ['GET'])
+def getUsersById(id):
+	finder = UserFinder.Instance()
+	row = finder.findById(int(id))
+	if (row): # si no es nulo
+		info = tupleToJson(row) 
+		resp = Response(info, status=200, mimetype="application/json")
+	else:
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
+	return resp
 
 @app.route("/users", methods = ['POST'])
 def postUser():
