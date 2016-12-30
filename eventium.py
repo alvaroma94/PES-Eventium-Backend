@@ -22,6 +22,7 @@ from CategoriesFinder import CategoriesFinder
 from SponsoredGateway import SponsoredGateway
 from SponsoredFinder import SponsoredFinder
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
+from utilsBD import UtilsBD
 import psycopg2
 import json
 import numbers
@@ -129,6 +130,21 @@ def verify_auth_token(token):
 @app.route("/categories", methods = ['GET'])
 def getCategories():
 	return Response(categories, status=200,  mimetype="application/json")
+
+def editSponsor(idSponsor, esSponsor):
+	query = "UPDATE \"USER\"  SET \"SPONSOR\" = %s, \"VERIFIED\" = %s WHERE \"ID\" = %s"
+	values = (esSponsor, True, idSponsor)
+	UtilsBD.Instance().executeInsert(query,values)
+
+@app.route("/quitarSponsor/<id>", methods = ['PUT'])
+def quitarSponsor(id):
+	editSponsor(int(id), False)
+	return Response(msgUpdatedOK, status=200,  mimetype="application/json")
+
+@app.route("/darSponsor/<id>", methods =['PUT'])
+def darSponsor(id):
+	editSponsor(int(id), True)
+	return Response(msgUpdatedOK, status=200,  mimetype="application/json")
 
 @app.route("/me", methods = ['GET'])
 def me():
