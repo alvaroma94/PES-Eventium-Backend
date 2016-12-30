@@ -219,7 +219,7 @@ def sponsorizeEvent(id):
 	organizer = UserFinder.Instance().findById(event.organizerId)
 
 	url = request.url_root + "sponsorize?token=" + generate_sponsor_token(int(sponsorId),eventId)
-	msg = Message("Eventium", sender="admin@eventium.com", recipients=[sponsor.mail])
+	msg = Message("Eventium", sender="admin@eventium.com", recipients=[organizer.mail])
 	msg.body = "Hola " + organizer.username + " has recibido una propuesta de " + sponsor.username + " con correo " + sponsor.mail;
 	msg.body += " para patrocinar tu evento " + event.title + " ." + "Haz clic en el siguente enlace para confirmar: " + url
 	mail.send(msg)
