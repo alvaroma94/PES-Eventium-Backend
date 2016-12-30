@@ -31,7 +31,7 @@ class UserFinder:
 		return t
 
 	def findByName(self, username):
-		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s  AND \"SPONSOR\" = false"
+		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s"
 		values = (username,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
