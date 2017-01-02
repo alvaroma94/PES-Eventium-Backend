@@ -29,3 +29,8 @@ class GatewayFollowing:
 	def toTuple(self):
 		info = {"followed": self.followedId, "subscribed": self.subscribed}
 		return info
+
+class GatewayFollower(GatewayFollowing):
+	def toTuple(self):
+		info = {"follower": self.followerId, "subscribed": self.subscribed}
+		return info

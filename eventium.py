@@ -576,8 +576,19 @@ def getUserEvents(id):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")		
 
+
+@app.route("/users/<id>/followers", methods = ['GET'])
+def getUserFollowers(id): #quien le sigue
+	rows = FinderFollowing.Instance().findFollowers(id)
+	if (rows): # si no es nulo
+		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
+		resp = Response(info, status=200, mimetype="application/json")
+	else:
+		resp = Response(msgNotFound, status=404,  mimetype="application/json")
+	return resp
+
 @app.route("/users/<id>/follows", methods = ['GET'])
-def getUserFollows(id):
+def getUserFollows(id): # a quien sigue
 	rows = FinderFollowing.Instance().find(id)
 	if (rows): # si no es nulo
 		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera

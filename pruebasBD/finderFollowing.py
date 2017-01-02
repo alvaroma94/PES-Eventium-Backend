@@ -1,6 +1,6 @@
 import psycopg2
 import SingletonPattern
-from gatewayFollowing import GatewayFollowing
+from gatewayFollowing import GatewayFollowing, GatewayFollower
 from connection import Connection
 from utilsBD import UtilsBD
 import json
@@ -27,5 +27,14 @@ class FinderFollowing:
 			test = GatewayFollowing(t[0], t[1])
 			return test
 		return t
-		
+	
+	def findFollowers(self,id):
+		query = "SELECT * FROM \"FOLLOWS\" WHERE \"FOLLOWEDID\" = %s"
+		values = (id,)
+		ret = []
+		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
+		for t in tuples:
+			test = GatewayFollower(followerId = t[0], followedId = t[1], subscribed = t[2])
+			ret.append(test)
+		return ret
 
