@@ -40,7 +40,13 @@ class UtilsBD:
 		return tuples
 
 	def executeRemove(self, query, values):
-		defaultQuery(query, values)
+		err = None
+		try:
+			defaultQuery(query, values)
+		except:
+			err = True
+			Connection.Instance().rollback()
+		return err
 
 	def executeUpdate(self, query, values):
 		err = None

@@ -24,3 +24,10 @@ class SponsoredFinder:
 		values = (sponsorId,eventId)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		return t != None
+
+	def getSponsoring(self,sponsorId,eventId):
+		query = "SELECT * FROM \"SPONSORED\" WHERE \"USERID\" = %s AND \"EVENTID\" = %s "
+		values = (sponsorId,eventId)
+		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
+		if (t): return SponsoredGateway(t[0],t[1])
+		return None

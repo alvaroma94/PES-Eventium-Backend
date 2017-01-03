@@ -225,6 +225,21 @@ def sponsorizeEvent(id):
 	mail.send(msg)
 	return Response(msgEmailSent, status = 200,mimetype="application/json")
 
+@app.route("/events/<id>/sponsorize", methods = ['DELETE'])
+def desponsorizeEvent(id):
+	eventId = int(id)
+	token = request.headers['token']
+	sponsorId = verify_auth_token(token)
+
+	
+	if not sponsorId: return Response(msgNoPermission, status=401,  mimetype="application/json")
+	row = SponsoredFinder.Instance().getSponsoring(sponsorId,eventId)
+
+	if not row or not row.delete(): return Response(msgNotFound, status=404,  mimetype="application/json")
+	else : return Response(msgDeletedOK, status=200,  mimetype="application/json")
+
+
+
 @app.route("/events/<id>/sponsors", methods = ['GET'])
 def getSponsorsByEvent(id):
 	return Response(tuplesToJson(SponsoredFinder.Instance().getSponsorsByEvent(int(id))), status=200, mimetype="application/json")
