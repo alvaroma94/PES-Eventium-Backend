@@ -581,6 +581,24 @@ def getUser(name):
 	else:
 		return Response(msgNotFound, status=404,  mimetype="application/json")	
 
+@app.route("/users/<id>/history", methods = ['GET']) #devuelve los eventos asistidos
+def getUserHistory(id):
+
+	rows = CalendarFinder.Instance().getByUserId(int(id))
+	ret = []
+	fechaHoy = date.today()
+
+	for r in rows:
+		event = EventFinder.Instance().findById(r.eventid)
+		fechaAux = event.fechaf.split('/')
+		fechaEvento = date(int(fechaAux[0]), int(fechaAux[1]), int(fechaAux[2]))
+		if (fechaEvento < fechaHoy): ret.append(r)
+
+
+	info = tuplesToJson(ret) #row es un gateway cualquiera
+	return Response(info, status=200, mimetype="application/json")
+	
+
 @app.route("/users/<id>/events", methods = ['GET'])
 def getUserEvents(id):
 	finder = EventFinder.Instance()

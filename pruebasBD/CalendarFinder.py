@@ -32,3 +32,4 @@ class CalendarFinder:
 		for row in rows:
 			ret.append(CalendarGateway(row[0], id))
 		return ret
+
