@@ -116,7 +116,7 @@ class EventFinder:
 		ret = []
 		for t in tuples:
 			test = EventGateway(id = t[0], organizerId = t[1], title = t[2], horaf = t[6], horai = t[5],  fechaf = t[4], fechai = t[3],  precio = t[7],  pic = t[8],  ciudad = t[9], categoria = t[10], destacado = t[11], descripcion = t[12], 
-			url = t[13], nreports = t[14], direccion = t[15])
+			url = t[13], nreports = t[14], direccion = t[15],valoration = getValoration(t[0]) )
 			ret.append(test)
 		return ret
 
