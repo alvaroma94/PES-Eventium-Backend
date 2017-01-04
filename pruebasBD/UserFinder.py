@@ -22,11 +22,11 @@ def perteneceRango(id,estrellasMin, estrellasMax):
 	if valoration == "": valoration = 0
 
 	if estrellasMin and estrellasMax:
-		return float(valoration) >= int(estrellasMin) and int(valoration) <= int(estrellasMax)
+		return float(valoration) >= float(estrellasMin) and float(valoration) <= float(estrellasMax)
 	elif estrellasMin:
-		return float(valoration) >= int(estrellasMin)
+		return float(valoration) >= float(estrellasMin)
 	else: 
-		return float(valoration) <= int(estrellasMax)
+		return float(valoration) <= float(estrellasMax)
 
 #patron finder de Row Data Gateway
 @SingletonPattern.Singleton
