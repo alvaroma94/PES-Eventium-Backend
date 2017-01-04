@@ -501,8 +501,13 @@ def getEvent(id):
 
 @app.route("/users", methods = ['GET'])
 def getUsers():
-	finder = UserFinder.Instance()
-	rows = finder.getAll()
+
+
+	estrellasMin = request.args.get('estrellasMin')
+	estrellasMax = request.args.get('estrellasMax')
+	ciudad = request.args.get('ciudad')
+
+	rows = UserFinder.Instance().getAll(estrellasMin,estrellasMax,ciudad)
 	if (rows): # si no es nulo
 		info = tuplesToJson(rows) # rows tiene q ser un conjunto de gateways cualesquiera
 		resp = Response(info, status=200, mimetype="application/json")
