@@ -21,6 +21,7 @@ from CategoriesGateway import CategoriesGateway
 from CategoriesFinder import CategoriesFinder
 from SponsoredGateway import SponsoredGateway
 from SponsoredFinder import SponsoredFinder
+from ValorationFinder import ValorationFinder
 from utilsJSON import tupleToJson, tuplesToJson #pillo funciones
 from utilsBD import UtilsBD
 import psycopg2
@@ -466,6 +467,15 @@ def postEventValoration(eventid):
 		return Response(msgAlreadyExists, status = 200, mimetype="application/json")
 	elif error == psycopg2.DataError:
 		return Response(msgTypeError, status = 400, mimetype="application/json")
+
+@app.route("/events/<eventid>/valoration", methods = ['GET'])
+def getHeVotado(eventid):
+	token = request.headers['token']
+	id = verify_auth_token(token)
+	if not id: return Response(msgNoPermission, status=401,  mimetype="application/json")
+
+	return Response(tupleToJson(ValorationFinder.Instance().findVoted(id,int(eventid))),status=200,mimetype="application/json")
+
 
 @app.route("/events", methods = ['GET'])
 def getEvents():

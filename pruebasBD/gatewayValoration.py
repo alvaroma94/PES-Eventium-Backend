@@ -19,3 +19,10 @@ class GatewayValoration:
 	def toTuple(self):
 		info = {"points" : self.points, "userid" : self.userid, "eventid":self.eventid}
 		return info
+
+class GatewayVoted(GatewayValoration):
+	def toTuple(self):
+		if self.points != None and self.userid != None:
+			voted = 'True'
+		else: voted = 'False'
+		return {"voted": voted}
