@@ -258,6 +258,30 @@ paths:
                   $ref: '#/definitions/Event'
           500:
             description: Internal server error
+  /events/recommended:
+    get:
+        summary: Gets all the recommended events
+        tags:
+          - Events
+        parameters:
+        - name: token
+          in: header
+          description: Authentication token
+          required: True
+          type: string
+        responses:
+          200:
+            description: Events retrieved correctly
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/Event'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
   /events/{id}/comments:
     get:
         summary: Gets an array with the comments of one event
@@ -357,6 +381,137 @@ paths:
                 $ref: '#/definitions/Response'
           500:
             description: Internal server error  
+  /events/{id}/sponsorize:
+    post:
+        summary: Sends a sponsoring request
+        tags:
+          - Events
+          - Sponsors
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        - name: token
+          in: header
+          required: True
+          type: string
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error  
+    delete:
+        summary: Deletes a sponsoring request
+        tags:
+          - Events
+          - Sponsors
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        - name: token
+          in: header
+          required: True
+          type: string
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          404:
+            description: Not found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error  
+  /events/{id}/sponsors:
+    get:
+        summary: Get the sponsors of an event
+        tags:
+          - Events
+          - Sponsors
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        - name: token
+          in: header
+          required: True
+          type: string
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/Sponsor'
+          500:
+            description: Internal server error
+  /events/{id}/attendees:
+    get:
+        summary: Get the id of the users attending this event
+        tags:
+          - Events
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/userId'
+          500:
+            description: Internal server error
+  /events/{id}/report:
+    put:
+        summary: Reports an event
+        tags:
+          - Events
+        parameters:
+        - name: id
+          in: path
+          description: Id of the event
+          required: True
+          type: integer
+        - name: token
+          in: header
+          description: Authentication token
+          required: True
+          type: integer
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                type: array
+                items:
+                  $ref: '#/definitions/userId'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
   /users:
     get:
         summary: List of all users
@@ -474,7 +629,7 @@ paths:
             description: Internal server error
   /users/{id}/follows:
     get:
-        summary: Gets the users the current user logged in is following
+        summary: Gets who the users the current user logged in is following
         tags:
           - Users
         parameters:
@@ -532,6 +687,28 @@ paths:
                 $ref: '#/definitions/Response'
           500:
             description: Internal server error 
+  /users/{id}/followers:
+    get:
+        summary: Gets the current user logged in followers
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        responses:
+          200:
+            description: An array containing this user followers and wether the subscription is active or not
+            schema:
+                $ref: '#/definitions/Follow'
+          404:
+            description: No follows found
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
   /users/{id}/follows/{followedId}:
     delete:
         summary: Deletes a follow from the current user logged in
@@ -816,6 +993,96 @@ paths:
                 $ref: '#/definitions/Response'
           500:
             description: Internal server error      
+  /users/{id}/report:
+    put:
+        summary: Reports a user
+        tags:
+          - Users
+        parameters:
+        - name: id
+          in: path
+          description: Id of the user to report
+          required: True
+          type: integer
+        - name: token
+          in: header
+          description: Authentication token
+          required: True
+          type: integer
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error
+  /users/{id}/history:
+    get:
+      summary: Get the events attended by this user
+      tags:
+        - Users
+        - Events
+      parameters:
+      - name: id
+        in: path
+        description: User id
+        required: True
+        type: string
+      responses:
+        200:
+          description: Events retrieved correctly
+          schema:
+            type: array
+            items:
+                $ref: '#/definitions/eventId'
+        400:
+          description: Bad request
+          schema:
+              $ref: '#/definitions/Response'
+        401:
+          description: Permission denied
+          schema:
+              $ref: '#/definitions/Response'
+        500:
+          description: Internal server error 
+    post:
+        summary: Add an event to the the user calendar
+        tags:
+          - Users
+          - Events
+        parameters:
+        - name: id
+          in: path
+          description: User id
+          required: True
+          type: string
+        - name: token
+          in: header
+          required: True
+          type: string
+        - name: eventId
+          in: formData
+          required: True
+          type: string
+        responses:
+          200:
+            description: post done correctly
+            schema:
+                  $ref: '#/definitions/Category'
+          400:
+            description: Bad request
+            schema:
+                $ref: '#/definitions/Response'
+          401:
+            description: Permission denied
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error      
   /users/{id}/calendar/{eventId}:
     delete:
       summary: Get the events created by this user
@@ -935,6 +1202,75 @@ paths:
               $ref: '#/definitions/Category'
         500:
           description: Internal server error
+  /darSponsor/{id}:
+    put:
+        summary: Turns the user with "id" into one sponsor
+        tags:
+          - Users
+          - Sponsors
+        parameters:
+        - name: id
+          in: path
+          required: True
+          type: number
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error 
+  /quitarSponsor/{id}:
+    put:
+        summary: Turns the sponser with "id" into a user
+        tags:
+          - Users
+          - Sponsors
+        parameters:
+        - name: id
+          in: path
+          required: True
+          type: number
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error 
+  /sponsors:
+    get:
+        summary: Gets all the sponsors
+        tags:
+          - Sponsors
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+              type: array
+              items:
+                  $ref: '#/definitions/User'
+
+          500:
+            description: Internal server error 
+  /sponsorize:
+    get:
+        summary: Creates a relation between event and sponsor (used internally)
+        tags:
+          - Sponsors
+        parameters:
+        - name: token
+          in: header
+          description: SPONSOR token containing the information of the sponser and the event
+          required: True
+          type: string
+        responses:
+          200:
+            description: Correctly performed
+            schema:
+                $ref: '#/definitions/Response'
+          500:
+            description: Internal server error 
           
 definitions:
   Name:
@@ -943,6 +1279,18 @@ definitions:
       name:
         type: string
         description: name of the user
+  userId:
+    type: object
+    properties:
+      name:
+        type: integer
+        description: Id of the user
+  eventId:
+    type: object
+    properties:
+      name:
+        type: integer
+        description: Id of the event
   Calendar:
     type: object
     properties:
@@ -1057,4 +1405,14 @@ definitions:
       subscribed:
         type: boolean
         description: Wether the user logged in is subscribed to the user followed or not
+  Sponsor:
+    type: object
+    properties:
+      userid:
+        type: integer
+        description: Id of the sponsor
+      eventid:
+        type: integer
+        description: Id of the event sponsored
+
 
