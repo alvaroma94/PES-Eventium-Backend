@@ -6,7 +6,7 @@ from utilsBD import UtilsBD
 import json
 
 def getValoration(id):
-	query = "SELECT AVG(\"POINTS\") FROM \"COMMENT\" c, \"EVENT\" e WHERE c.\"EVENTID\" = e.\"ID\" and e.\"ORGANIZERID\" = %s"
+	query = "SELECT AVG(\"POINTS\") FROM \"VALORATION\" c, \"EVENT\" e WHERE c.\"EVENTID\" = e.\"ID\" and e.\"ORGANIZERID\" = %s"
 	values = (id,)
 	average = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 	if (average[0] != None):
