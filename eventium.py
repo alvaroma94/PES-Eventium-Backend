@@ -162,8 +162,9 @@ def login():
 	password = request.form['password']
 	finder = UserFinder.Instance()
 	row = finder.findForLogin(username,password)
-	if(row.banned == True): return Response(msgBanned, status=401,  mimetype="application/json")
+	
 	if (row):
+		if(row.banned == True): return Response(msgBanned, status=401,  mimetype="application/json")
 		mid = row.id
 		print 'la id es ', mid
 		infoToken = {'token' : generate_auth_token(mid)}
