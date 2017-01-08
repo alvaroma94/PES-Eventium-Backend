@@ -45,7 +45,7 @@ class UserFinder:
 		return t
 
 	def findByName(self, username):
-		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s"
+		query = "SELECT * FROM \"USER\" WHERE \"USERNAME\" = %s ORDER BY \"USERNAME\""
 		values = (username,)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if (t):
@@ -54,7 +54,7 @@ class UserFinder:
 		return t
 
 	def getAll(self):
-		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = false"
+		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = false ORDER BY \"USERNAME\""
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
@@ -64,7 +64,7 @@ class UserFinder:
 
 
 	def getAll(self,estrellasMin,estrellasMax,ciudad):
-		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = false"
+		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = false ORDER BY \"USERNAME\""
 		if ciudad:
 			query = query + " AND \"CIUDAD\" ILIKE '%s' " % (ciudad)
 
@@ -108,7 +108,7 @@ class UserFinder:
 		return t
 
 	def findSponsors(self):
-		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = true"
+		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = true ORDER BY \"USERNAME\""
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:

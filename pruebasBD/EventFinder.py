@@ -103,7 +103,7 @@ class EventFinder:
 				elif categoria[i] == "," and categoria[i+1] != '-': query = query + " OR "
 				i += 1
 			
-			query = query  + " ) "
+			query = query  + " )"
 			cont = cont - 1
 			##print query
 			###if cont == 0:
@@ -111,7 +111,7 @@ class EventFinder:
 			##elif cont > 0:
 			##	query = query + " \"CATEGORIA\" = '%s' AND" % (categoria)
 
-
+		query = query + " ORDER BY \"TITLE\""
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
@@ -121,7 +121,7 @@ class EventFinder:
 		return ret
 
 	def getTitulo(self, titulo):
-		query = "SELECT * FROM \"EVENT\" WHERE \"TITLE\" = %s"
+		query = "SELECT * FROM \"EVENT\" WHERE \"TITLE\" = %s ORDER BY \"TITLE\""
 		values = (titulo,)
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
@@ -142,7 +142,7 @@ class EventFinder:
 		return ret
 
 	def getAllDestacados(self):
-		query = "SELECT * FROM \"EVENT\" WHERE \"DESTACADO\" = True"
+		query = "SELECT * FROM \"EVENT\" WHERE \"DESTACADO\" = True ORDER BY \"TITLE\""
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
@@ -152,7 +152,7 @@ class EventFinder:
 		return ret
 
 	def findByUserId(self, id):
-		query = "SELECT * FROM \"EVENT\" WHERE \"ORGANIZERID\" = %s"
+		query = "SELECT * FROM \"EVENT\" WHERE \"ORGANIZERID\" = %s ORDER BY \"TITLE\""
 		values = (id,)
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
@@ -164,7 +164,7 @@ class EventFinder:
 
 	# categories tiene q ser un array []
 	def findByCategories(self,categories):
-		query = "SELECT * FROM \"EVENT\" WHERE \"CATEGORIA\" = ANY(%s)"
+		query = "SELECT * FROM \"EVENT\" WHERE \"CATEGORIA\" = ANY(%s) ORDER BY \"TITLE\""
 		values = (categories,)
 		print values
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
