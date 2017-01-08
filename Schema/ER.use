@@ -14,6 +14,7 @@ attributes
 	PIC : String
 	VERIFIED : Boolean
 	BANNED : Boolean
+	SPONSOR : Boolean
 end
 
 class EVENT
