@@ -16,6 +16,7 @@ class FinderComment:
 		tuples = UtilsBD.Instance().executeSelect(query, values, fetchone = False)
 		ret = []
 		for t in tuples:
-			test = GatewayComment(text = t[0], userid = t[1], eventid = t[2])
-			ret.append(test)
+			if (t[0] != None):
+				test = GatewayComment(text = t[0], userid = t[1], eventid = t[2])
+				ret.append(test)
 		return ret

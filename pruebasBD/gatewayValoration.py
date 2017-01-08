@@ -12,9 +12,11 @@ class GatewayValoration:
 		self.eventid = eventid
 
 	def insert(self):
-		query = "INSERT INTO \"COMMENT\" (\"POINTS\", \"USERID\", \"EVENTID\") VALUES (%s ,%s, %s)"
+		query = "INSERT INTO \"VALORATION\" (\"POINTS\", \"USERID\", \"EVENTID\") VALUES (%s ,%s, %s)"
 		values = (self.points, self.userid, self.eventid)
 		return UtilsBD.Instance().executeInsert(query,values)
+	def update(self):
+		pass
 
 	def toTuple(self):
 		info = {"points" : self.points, "userid" : self.userid, "eventid":self.eventid}

@@ -16,6 +16,11 @@ class GatewayComment:
 		values = (self.text, self.userid, self.eventid)
 		return UtilsBD.Instance().executeInsert(query,values)
 
+	def update(self):
+		query = "UPDATE \"COMMENT\" SET \"TEXT\" = %s WHERE \"USERID\" = %s AND \"EVENTID\" = %s"
+		values = (self.text, self.userid, self.eventid)
+		return UtilsBD.Instance().executeUpdate(query,values)
+
 	def toTuple(self):
 		info = {"text" : self.text, "userid" : self.userid, "eventid":self.eventid}
 		return info

@@ -11,7 +11,7 @@ class ValorationFinder:
 		pass
 
 	def findVoted(self,userid,eventid):
-		query =  "SELECT * FROM \"COMMENT\" WHERE \"USERID\" = %s AND  \"EVENTID\" = %s"
+		query =  "SELECT * FROM \"VALORATION\" WHERE \"USERID\" = %s AND  \"EVENTID\" = %s"
 		values = (userid,eventid)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if t:
