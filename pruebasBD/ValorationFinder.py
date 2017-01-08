@@ -15,6 +15,7 @@ class ValorationFinder:
 		values = (userid,eventid)
 		t = UtilsBD.Instance().executeSelect(query, values, fetchone = True)
 		if t:
-			return GatewayVoted(t[0], t[2],t[3])
+			print t
+			return GatewayVoted(t[0], t[1],t[2])
 		else:
 			return GatewayVoted(None,None,None)
