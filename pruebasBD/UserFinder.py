@@ -64,10 +64,10 @@ class UserFinder:
 
 
 	def getAll(self,estrellasMin,estrellasMax,ciudad):
-		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = false ORDER BY \"USERNAME\""
+		query = "SELECT * FROM \"USER\" WHERE \"SPONSOR\" = false"
 		if ciudad:
 			query = query + " AND \"CIUDAD\" ILIKE '%s' " % (ciudad)
-
+		query = query + " ORDER BY \"USERNAME\""
 		tuples = UtilsBD.Instance().executeSelect(query, None, fetchone = False)
 		ret = []
 		for t in tuples:
