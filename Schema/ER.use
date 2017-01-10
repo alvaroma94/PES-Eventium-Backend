@@ -37,6 +37,10 @@ end
 class COMMENT
 attributes
 	TEXT : String
+end
+
+class VALORATION
+attributes
 	POINTS : Integer
 end
 
@@ -87,6 +91,16 @@ end
 association Has between
 	EVENT[1]
 	COMMENT[*]
+end
+
+association Evaluates between
+	EVENT[1]
+	VALORATION[*]
+end
+
+association Puts between
+	USER[1]
+	VALORATION[*]
 end
 
 association Posts between
